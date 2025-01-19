@@ -1,9 +1,0 @@
-#!/bin/csh -f
-
-foreach i ( *.png)
-
-convert -geometry  50x50% $i $i 
-
-end
-
-
