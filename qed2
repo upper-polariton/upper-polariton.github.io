@@ -1,0 +1,151 @@
+#/bin/bash 
+# 
+# Please read this carefully, you may need to change it on a few locations
+#
+# wrapper to call gaussian, convert in- and output with some (tedious)
+# awk scripting into the 'old' formats and perform the call to the
+# standard g09/g03 installed on the system.  For reasons I don't
+# understand the system() routine does not like long filenames. I
+# therefore call this script gau
+# 
+# To make gromacs aware of it, use GAUSS_EXE:
+#
+# export GAUSS_EXE=gau
+#
+# Also make sure that gromacs can find it by using the full path
+# localtion to this file:
+#
+# export GAUSS_DIR=
+#
+
+
+# let gromacs write a "normal" gaussian input file, using the keyword
+# determined by the User's input. Alternatively, it is possible now to
+# provide different keywords by placing a header.com in the
+# directory. This will take precedence over the gromacs keywords.
+
+# create some temporary files
+if [ -e temp.com ] 
+    then
+	rm -fr temp.com
+fi
+
+# The user has provide an own header.com with keywords, including the title, but no whiteline after that!
+if [ -e header.com ]
+    then
+	cat header.com >> temp.com
+else
+# Use the gromacs keywords based on input in the mdp file
+awk -v w=0 '{if ( ( w == 0 ) && ( $1 != "%subst" )) print}{ if ($1 == "#P" || $1 == "#T") w=1}' input.com >> temp.com
+    echo "Nosymm units=bohr" >> temp.com
+    echo "FORCE Punch=(Derivatives) iop(3/33=1)" >> temp.com
+    echo "Prop=(Field,Read)" >> temp.com
+    echo " " >> temp.com
+    echo "empty title" >> temp.com
+fi
+
+# Use the knowledge on the input structure to extract the coordinates, etc.
+awk -v w=0 '{if (w == 1) print}{if ( $1 == "input-file") w=1}' input.com >> temp.com
+# IN order to get the gradients on the MM point charges, we request
+# gaussian to compute te electrostatic gradients on these centers. We
+# thus need to provide the coordinates of the MM charges once more. We
+# again use our knowledge of the input structure and simply wait until
+# we have read in three whitelines, which means we have arrived at the
+# point charges field.
+#
+# Note that gaussian ALWAYS requires these positions to be in angstrom, 
+# even if units=bohr!
+
+awk -v nlines=0 '{if (nlines > 2 && $3 ) printf "%10.8f %10.8f %10.8f\n", $1*0.529177249,$2*0.529177249,$3*0.529177249}{if ($1) ;else nlines++ }' input.com >> temp.com
+
+# We need another temporary file to remember the charges, which we
+# will multiply later when the gaussian call is done with the
+# potential to get the gradients.
+
+if [ -e MMcharges.txt ]
+ then
+    rm -rf MMcharges.txt
+fi
+touch MMcharges.txt
+
+awk -v nlines=0 '{if (nlines > 2 && $3 ) print $4}{if ($1) ;else nlines++ }' input.com >> MMcharges.txt
+
+# Now the input file is in principle ready and we can make a call to
+# gaussian. If additional input fields are required after the
+# pointcharges, such as the state averaging coefficients, they can be
+# entered here via another cat command.
+
+g09 temp.com
+export return=$status
+
+# build in a check if gaussian quitted cleanly
+# after finishing, we can read in the input
+if [ -e temp.7 ] 
+    then
+    rm -rf temp.7
+fi
+touch temp.7
+
+#self-energy of MM charges need to be subtracted from total energy
+grep "Self energy" temp.log |awk '{print $7}' > pointchargeself.txt
+
+# look for the final energy
+grep "SCF Done"  temp.log | awk '{print $5}' > SCF.txt
+
+paste SCF.txt pointchargeself.txt|awk '{printf "%20.15lf\n", $1-$2}' >> temp.7
+
+# gradients on the QM atoms
+cat fort.7 >> temp.7
+
+#get the gradients of the MM atoms
+awk -v start=10000000000 '{if ($5 == "Field")  start=NR ;else if ( NR > start+2 && $1 == "-----------------------------------------------------------------" ) start=10000000000}{if ( NR > start+2 && $2 != "Atom") print  }' temp.log > gradients.txt
+paste MMcharges.txt gradients.txt|awk '{print -1*$1*$4,-1*$1*$5,-1*$1*$6}' >> temp.7
+rm -rf fort.7
+# Guassian uses D rather than e in scientific representation, so we change that.
+sed 's/D/E/g' temp.7 > fort.7
+cp fort.7 S0.out
+################################################################
+#
+#now perform the calculations for S1. In this test we use CIS
+#
+#
+################################################################
+sed 's/RHF/CIS(SINGLETS)/g' temp.com > temp_S1.com
+g09 temp_S1.com
+
+export return=$status
+
+# build in a check if gaussian quitted cleanly
+# after finishing, we can read in the input
+if [ -e temp.7 ]
+  then
+    rm -rf temp.7
+fi
+touch temp.7
+
+#self-energy of MM charges need to be subtracted from total energy
+grep "Self energy" temp_S1.log |awk '{print $7}' > pointchargeself.txt
+
+# look for the S1 energy
+grep "Total Energy, E(CIS)" temp_S1.log | awk '{print $5}' > SCF.txt
+
+paste SCF.txt pointchargeself.txt|awk '{printf "%20.15lf\n", $1-$2}' >> temp.7
+
+# gradients on the QM atoms
+cat fort.7 >> temp.7
+
+#get the gradients of the MM atoms
+awk -v start=10000000000 '{if ($5 == "Field")  start=NR ;else if ( NR > start+2 && $1 == "-----------------------------------------------------------------" ) start=10000000000}{if ( NR > start+2 && $2 != "Atom") print  }' temp_S1.log > gradients.txt
+paste MMcharges.txt gradients.txt|awk '{print -1*$1*$4,-1*$1*$5,-1*$1*$6}' >> temp.7
+awk -v start=10000000000 '{if ($6 == "electric" && $7 == "dipole") start=NR}{if ( NR == start+2) print}' temp_S1.log | awk '{print $2,$3,$4}' > tdm.txt
+
+cat tdm.txt >> temp.7
+if [ -e S1.out ]
+  then
+    rm -rf S1.out
+fi
+# Guassian uses D rather than e in scientific representation, so we change that.
+sed 's/D/E/g' temp.7 >  S1.out
+cp S0.out fort.7
+
+exit $return

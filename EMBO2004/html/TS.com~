@@ -1,0 +1,97 @@
+%chk=TS
+#P PM3 OPT=(TS,noeigentest) TEST
+
+optimization of the TS
+
+0 1
+ s  
+ c   1 cs2       
+ c   2 cc3        1 ccs3        
+ c   3 cc4        2 ccc4         1 dih4    
+ c   4 cc5        3 ccc5         2 dih5   
+ c   3 cc6        4 ccc6         5 dih6   
+ n   6 nc7        3 ncc7         4 dih7   
+ c   7 cn8        6 cnc8         3 dih8   
+ c   5 cc9        4 ccc9         3 dih9   
+ c   9 cc10       5 ccc10        4 dih10 
+ o   8 oc11       4 occ11        3 dih11   
+ o   6 oc12       3 occ12        4 dih12   
+ c   7 cn13       8 cnc13        4 dih13   
+cl   2 clc14      3 clcc14       4 dih14   
+cl  10 clc15      2 clcc15       3 dih15   
+cl   9 clc16     10 clcc16       2 dih16   
+cl   5 clc17      4 clcc17       8 dih17   
+ o   1 os18       2 osc18        3 dih18   
+ o   1 os19       2 osc19        3 dih19   
+ h  13 hc20       7 hcn20        8 dih20   
+ h  13 hc21       7 hcn21       20 dih21   
+ h  13 hc22       7 hcn22       20 dih22   
+ h   4 hc23       8 hcc23        3 dih23   
+ h   3 hc24       4 hcc24        6 dih24   
+ 					 
+cs2         1.585718  
+cc3         2.000000  
+ccs3        102.675   
+cc4         1.570937  
+ccc4        103.071   
+dih4         36.949   
+cc5         2.000000  
+ccc5        101.897   
+dih5         -0.143   
+cc6         1.531807  
+ccc6        104.191   
+dih6       -122.872   
+nc7         1.408323  
+ncc7        110.893   
+dih7          0.758   
+cn8         1.407104  
+cnc8        110.871   
+dih8         -1.115   
+cc9         1.538777  
+ccc9        107.077   
+dih9         67.752   
+cc10        1.368752  
+ccc10       107.220   
+dih10       -70.525   
+oc11        1.236619  
+occ11       124.550   
+dih11      -178.993   
+oc12        1.211177  
+occ12       122.904   
+dih12       178.960   
+cn13        1.440000  
+cnc13       124.459   
+dih13       179.939   
+clc14       1.803750  
+clcc14      114.715   
+dih14       160.869   
+clc15       1.727117  
+clcc15      127.414   
+dih15      -104.113   
+clc16       1.697236  
+clcc16      126.470   
+dih16      -175.813   
+clc17       1.789073  
+clcc17      114.138   
+dih17        85.483   
+os18        1.808798  
+osc18       113.661   
+dih18      -174.060   
+os19        1.806665  
+osc19       115.965   
+dih19        61.529   
+hc20        1.089000  
+hcn20       109.471   
+dih20       180.000   
+hc21        1.089000  
+hcn21       109.471   
+dih21       120.000   
+hc22        1.089000  
+hcn22       109.471   
+dih22       240.000   
+hc23        1.089000  
+hcc23       109.471   
+dih23       180.000   
+hc24        1.089000  
+hcc24       109.471   
+dih24       180.000   

@@ -1,0 +1,29 @@
+#!/bin/csh -f
+
+set begin = $1
+set end   = $2
+set steps = $3
+
+set i = 0
+set j = -1
+
+while ($i <= $steps )
+
+cd step_{$i}
+
+if ( $i > 0 ) then
+
+/scratch/gmx/src/kernel/grompp -f ../TS_constr.mdp -c ../step_{$j}/confout.gro -n ../index -p topol.top
+else
+/scratch/gmx/src/kernel/grompp -f ../TS_constr.mdp -c ../confin.gro -n ../index -p topol.top
+endif
+
+/scratch/gmx/src/kernel/mdrun -v
+
+@ i++
+@ j++
+cd ..
+
+
+end
+

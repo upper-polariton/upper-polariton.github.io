@@ -1,0 +1,71 @@
+title                    = my_mdp_file
+cpp                      = /lib/cpp
+include                  =
+define                   = 
+
+integrator               = md
+tinit                    = 0
+dt                       = 0.001
+nsteps                   = 500
+nstcomm                  = 1
+comm_grps                = system
+
+emtol                    = 100.0
+emstep                   = 0.001
+nstcgsteep               = 50
+
+nstxout                  = 1
+nstvout                  = 1
+nstfout                  = 1
+nstlog                   = 1
+nstenergy                = 1
+nstxtcout                = 1
+xtc_grps                 = system
+energygrps               = QMatoms rest_Protein SOL
+
+nstlist                  = 10
+ns_type                  = grid
+pbc                      = xyz
+rlist                    = 1.0
+
+coulombtype              = cut-off
+rcoulomb                 = 1.4
+epsilon_r                = 1
+vdwtype                  = Cut-off
+rvdw                     = 1.4
+
+tcoupl                   = berendsen
+tc-grps                  = rest_Protein SOL QMatoms
+tau_t                    = 0.1 0.1 0 ; QM atoms are uncoupled
+ref_t                    = 300 300 300
+Pcoupl                   = Berendsen
+pcoupltype               = isotropic
+tau_p                    = 1.0
+compressibility          = 4.5e-5
+ref_p                    = 1.0
+
+free_energy              = no
+init_lambda              = 0
+delta_lambda             = 0
+
+QMMM                     = yes
+QMMM-grps                = QMatoms
+QMmethod                 = CASSCF
+QMbasis                  = 3-21G
+QMMMscheme               = normal
+QMcharge                 = -1
+CASelectrons             = 6
+CASorbitals              = 6
+SH                       = yes
+
+gen_vel                  = no
+gen_temp                 = 300
+gen_seed                 = 173529
+
+constraints              = all-bonds
+constraint_algorithm     = LINCS
+unconstrained_start      = yes
+shake_tol                = 0.0001
+lincs_order              = 4
+lincs_warnangle          = 30
+morse                    = no

@@ -1,0 +1,69 @@
+<html>
+<Head>
+<title>links</title>
+</head>
+<body  bgcolor="#bbdddd" TEXT=000088 LINK=880000 VLINK=440000 ALINK=FFFFFF><font FACE=Arial>
+<h1><b><font FACE="Comic Sans MS,Arial" SIZE=6 > Links </font></b></h1>
+<p>
+<hr SIZE=1>
+<table CELLSPACING=0 CELLPADDING=0 BORDER=0><tr><td VALIGN=TOP><font FACE=Arial SIZE=4>
+<a HREF=index.html>Main</a>&nbsp;|&nbsp;</td>
+<td VALIGN=TOP><font FACE=Arial SIZE=4><a HREF=cv.html>Curriculum vitae</a> |
+<a HREF=publ.html>publications</a> |
+<a HREF=content.html>gromacs-sheets</a> | <a href="qmmm.html">qm/mm</a> |
+<a HREF=lnks.html>links</a></td></tr></table>
+<hr SIZE=1></font>
+<p>
+Some of my favorite links. Most are quite useful for computational
+chemists.
+<p><hr SIZE=1></font>
+<a HREF=http://www.gromacs.org>Gromacs</a> (the world's fastest molecular dynamics)<br>
+<a HREF=http://www.gromacs.org/documentation/reference_3.1/online.html>on-line Gromacs manual</a><br>
+<a HREF=http://www.dl.ac.uk/CFS/docs/gamess6_manual/chap1/node1.html>on-line GAMESS-UK manual</a><br>
+<a HREF=http://home.att.net/~mopacmanual/>on-line MOPAC2000 manual</a><br>
+<a HREF=http://www.scm.com/Doc/Welcome.html>on-line ADF manual</a><br>
+<a HREF=http://www.gnu.org>GNU</a> (lots of useful software)<br>
+<a HREF=http://www.linux-laptop.net/>linux on laptops</a> (useful for installing linux on your notebook)<br>
+<a HREF=http://www.avatar.se/molscript/>MolScript: The Official Web Site
+</a> (my favorite program to create images of molecules)<br>
+<a HREF=http://www.rcsb.org>PDB database
+</a> (the biggest database of protein structures)<br>
+
+<a HREF=http://www.google.com/>Google</a><br> 
+
+<a HREF=DAase.mpeg>DAase.mpeg</a> (Diels-Alder reaction in catalytic DA antibody)<br>
+<a HREF=da_spont.mpeg>da_spont.mpeg</a> (spontaneous Diels-Alder reaction)<br>
+<a HREF=aldo.html> aldo</a> (my son)<br>
+<a HREF=http://www.9292ov.nl/>9292ov
+</a> (routeplanner for publictransportation in the Netherlands)<br>
+<a HREF=http://md.chem.rug.nl/~groenhof/EMBO2004/html/tutorial.html> QM/MM tutorial
+</a> (QM/MM tutorial for the EMBO course in Shanghai, China)<br>
+<a HREF=GAMESS.tar.gz>GAMESS-UK</a><br>
+
+<p>
+<a NAME="movies">
+<h1>
+motormovies
+</h1>
+<a HREF=phase_I.mpeg>phase_I.mpeg</a>
+<br>
+<a HREF=phase_II.mpeg>phase_II.mpeg</a>
+<br>
+<a HREF=phase_III.mpeg>phase_III.mpeg</a>
+<br>
+<a HREF=phase_IV.mpeg>phase_IV.mpeg</a>
+<p>
+
+<a NAME="thesis">
+<h1>
+Thesis
+</h1>
+<a HREF=cover.pdf>cover.pdf</a> (cover)<br>
+<a HREF=thesis_groenhof.pdf>thesis_groenhof.pdf</a> (pdf document)<br>
+<a HREF=thesis_groenhof.doc>thesis_groenhof.doc</a> (word document)<br>
+
+
+
+</body>
+</html>
+

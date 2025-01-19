@@ -1,0 +1,119 @@
+<html>
+<head>
+  <title>QM/MM tutorial</title>
+</head>
+ <body bgcolor="#bbdddd" text="#000088" link="#880000" vlink="#440000" alink="#f
+fffff">
+
+<h1><font face="Arial"><b><font face="Comic Sans MS,Arial" size="6">
+QM/MM tutorial</font></b></font></h1>
+
+ 
+<hr size="1"> <p> 
+QM/MM calculations on thymine dimer repair.
+<p>
+<hr size="1"> 
+
+
+<a NAME="top">
+<h1>VI. Setting up Chemical Flooding</h1>
+<p>
+<a NAME="intro">
+<strong>Introduction</strong>
+<p>
+The major bottleneck of QM/MM MD simulation is that because of the
+enormous computational effort involved, only processes at pico- to
+nanoseconds timescales or faster can be studied
+directly. Unfortunately, apart from a few exceptions, relevant
+processes, such as chemical reactions occur at much slower timescales
+and therefore are currently far out of reach for conventional QM/MM
+MD. 
+<p>
+The chemical flooding technique addressess this problem by inclusion
+of a flooding potential onto the QM/MM potential energy surface. This
+flooding potential locally destabilizes the educt state and thereby
+significantly accelerates the escape from the initial energy minimum
+without affecting the reaction pathway. A notable strong point of the
+flooding approach is that no prior knowledge of the putative
+transition is required. In particular no reaction coordinate,
+transition, intermediate or product states have to be assumed or
+guessed. Thus the method allows for the unbiased prediction of
+transition pathways and product states.
+<p>
+<a NAME="theory">
+<strong>Theory</strong>
+<p>
+Flooding involves two steps: first, the free enenergy landscape of the
+system is approximated quasi-harmonically. Second, a multivariate
+flooding potential Vfl is constructed from this approximation, which
+serves to raise the bottom of the educt energy well, without affecting
+regions of higher energy, and in particular, the barriers surrounding
+the energy well, which determine the transition pathway.
+<p>
+For the quasi-harmonic approximation of the free energy surface,
+linear collective coordinates are chosen. These coordinates are
+obtained by priniciple component analysis (PCA). When a suitable set
+of collective coordinates is choosen, a gaussian-shaped flooding
+potential is constructed, such that its principal axes are parallel to
+the collective coordinates.
+<p>
+<a NAME="pca">
+<strong>Principal Component Analysis</strong>
+<p>
+We first need a set of collective coordinates that characterize the
+relevant motions in the QM subsystem. The program g_covar computes the
+covariance matrix of the fluctuational motion from an MD
+trajectory. For obvious reasons we restrict the analysis to the QM
+region. In addition, we will consider only the motions of the heavy
+atoms. The covariance matrix is diagonalized, yielding collective
+coordinates as eigenvectors. 
+<p>
+<font color=red>localhost:~>g_covar -n qmmm.ndx -f traj.xtc -s 
+</font>
+<p>
+The eigenvectors (or collective motions) can be visualized with
+pymol. To this end  we use g_anaeig to create a small trajectory of
+these motions. For instance
+<p>
+<font color=red>localhost:~>g_anaeig -nframes 40 -first 1 -last 1
+-n qmmm.ndx -extr vector1.pdb
+</font>
+<p>
+yields a interpolated trajectory of the first collective degree of
+freedom of the QM subsystem.
+
+<p>
+<a NAME="flood">
+<strong>Constructing the flooding potential</strong>
+<p>
+We will use all collective coordinates, or eigenvectors to construct a
+flooding potential. The flooding strength is 150 kJ/mol. The program
+make_edi generates a <a href=../files/sam.edi>sam.edi</a> file with the
+flooding parameters.
+<p>
+<font color=red>localhost:~>make_edi -f eigenvec.trr -eig eigenval.xvg
+-flood 1-48 -Eflnull 150 -outfrq 1 -s -n qmmm.ndx -tau 0
+</font>
+<p>
+the -outfrq sets the frequency of writing output, which we want to
+have at every step of the simulation. The resulting
+<a href=../files/sam.edi>sam.edi</a> file is read in by mdrun to
+perform the flooding simulation, as we will see next.
+<p>
+<table>
+<tr>
+<td>Next:</td><td><a HREF="electron2.html#top">VII. The effect of electron uptake II, enhanced sampling with chemical flooding
+simulation</a></td></tr> <td>Previous:</td><td><a HREF="electron1.html">
+V. The effect of electron uptake I
+</a></td></tr>
+</table>
+
+<p>
+<a HREF="#top">back to top</a>
+<p>
+<hr size="1"><p> updated 28/10/08 
+
+
+</body>
+</html>
+

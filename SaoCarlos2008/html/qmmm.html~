@@ -1,0 +1,201 @@
+<html>
+<head>
+  <title>QM/MM tutorial</title>
+</head>
+ <body bgcolor="#bbdddd" text="#000088" link="#880000" vlink="#440000" alink="#f
+fffff">
+
+<h1><font face="Arial"><b><font face="Comic Sans MS,Arial" size="6"> QM/MM tutor
+ial</font></b></font></h1>
+
+ 
+<hr size="1"> <p> 
+QM/MM calculations on Thymine Dimer repair.
+<p>
+<hr size="1"> 
+
+
+<a NAME="top">
+<h1>III. Setting up the system for QM/MM simulation with gromacs</h1>
+<p>
+<a NAME="intro">
+<strong>QM/MM subdivision</strong>
+<p>
+We will now set up the system to be simulated at the QM/MM level with
+Gromacs. The Thymine bases will be described at the semi-empirical AM1
+level of theory, while the remainder of the system is still modeled
+with the Amber99 forcefield. Figure 4 shows how we split up our system
+in a QM and MM part. 
+
+<a NAME="fig4"> 
+<blockquote>
+<img src=qmmm.png alt="" >
+</blockquote>
+
+<blockquote>
+<i><strong>Figure 4.</strong></i> Division of the system in a QM
+subsystem and an MM subsystem. The QM subsystem is described at the
+<i>semi-empirical</i> QM level, while the remainder of the system,
+consisting of the reactants-aliphatic tail is modeled with the Amber99
+forcefield.
+</blockquote>
+
+<p>
+The QM/MM division splits the systems along a chemical
+bond. Therefore, we need to cap the QM subsystem with a so-called link
+atom (la, figure 4). This link atom is present as a hydrogen atom in
+the QM calculation step. It is not physically present in the MM
+subsystem, but the forces on it, that are computed in the QM step, are
+distributed over the two atoms of the bond. The bondlength itself is
+constrained during the computations.
+<p>
+<a NAME="qmmmhowto">
+To make use of the QM/MM functionality in Gromacs, we have to
+<ul>
+<li>
+<a HREF="#topol"> introduce link atoms at the QM/MM boundary, if
+needed</a>;
+<li>
+<a HREF="#ndx"> specify which atoms are to be treated at a QM
+level</a>;
+<li>
+<a HREF="#mdp">specify the QM level, basisset, type of QM/MM interface
+and so on</a>.
+</ul>
+
+<a NAME="topol">
+<strong>adding link atoms</strong>
+<p>
+At the bond that connects the QM and MM subsystems we introduce a link
+atom. In Gromacs we make use of a special atomtype, called LA. This
+atomtype is treated as a hydrogen atom in the QM calculation, and as a
+dummy atom in the forcefield calculation. The link atoms, if any, are
+part of the system, but have no interaction with any other atom,
+except that the QM force working on it is distributed over the two
+atoms of the bond. In the topology the link atom (LA), therefore, is
+defined as a dummy atom:
+<blockquote>
+<font face="courier" color=black>
+[ dummies2 ] <br> LA QMatom MMatom 1 0.73<br>
+</font>
+</blockquote>
+Note, a link atom has no mass.
+<br>
+Furthermore, the bond itself is replaced by a constraint:
+<blockquote>
+<font face="courier" color=black>
+[ constraints ] <br> QMatom MMatom 2 0.153<br>
+</font>
+</blockquote>
+Note that, because in our system the QM/MM bond is a carbon-nitrogen
+bond (0.153 nm), we use a constraint length of 0.153 nm, and dummy
+position of 0.65. The latter is the ratio between the ideal C-H
+bondlength and the ideal C-C bond length. With this ratio, the link
+atom is always 0.1 nm away from the QMatom, consistent with the
+carbon-hydrogen bondlength. If the QM and MM subsystems are connected
+by a different kind of bond, a different constraint and a different
+dummy position, appropriate for that bond type, are required. Note
+that because the link atoms are constructed at each step of the
+simulation, it is not relevant a what position the link atoms are
+introduced in the configuration file. Thus, we can simply place the
+two linkatoms at the origin (0,0,0). Click to have a look at what the
+<a HREF=./files/qmmm1.gro>structure</a> and
+<a HREF=./files/qmmm.top>topology</a> files should look like for a
+QM/MM simulation.
+
+here: <a HREF=./files/qmmm.top>qmmm.top</a>.
+<p>
+<a NAME="ndx">
+<strong>specifying the QM atoms</strong>
+<p>
+Once we have decided which atoms should be treated by a QM method, we
+add these atoms, including the link atoms, if any, to the index
+file. We can either use the make_ndx program, or hack the atoms into
+the index.ndx file ourselves. The index file we will use in this
+tutorial is found here: <a HREF=./files/qmmm.ndx>qmmm.ndx</a>. It
+is possible to constrain the bonds in the QM subsystem along. It is
+also possible not to constrain them, while the bonds in the MM
+subsystem are. This is essential for instance if the QM atoms are
+supposed to undergo bond-breaking/formation reactions. In this case,
+Gromacs' bondtype 5 is used for the bonds in the QM subsystem:
+<blockquote>
+<font face="courier" color=black>
+[ bonds ]   <br>
+QMatom1 QMatom2 5<br>
+QMatom2 QMatom3 5<br>
+</font>
+</blockquote>
+<p>
+<a NAME="mdp">
+<strong>specifying the QM/MM simulation parameters</strong>
+<p>
+The last thing we need to do to setup gromacs for performing QM/MM
+calculations is to specify what level of QM theory gromacs has to use
+for the QM subsystem, what QM/MM interface to use, what multiplicity
+the QM subsystem has, and so on. All these things are defined in the
+mdp file. The following option lines need to be included for a QM/MM
+run:
+<blockquote>
+<font face="courier" color=black >
+QMMM                     = yes<br>
+QMMM-grps                = QMatoms<br>
+QMmethod                 = RHF<br>
+QMbasis                  = 3-21G*<br>
+QMMMscheme               = ONIOM<br>
+QMcharge                 = 0<br>
+QMmult                   = 1<br>
+</font>
+</blockquote>
+Note that the default options are shown here. The actual options
+depend on the system. The mdp file we will use for the short QM/MM
+equilibrtion simulation is located here:
+<a HREF=../vacuum/qmmm1.mdp>qmmm1.mdp</a>. In case one choses as the
+QMmethod a <i>semi-empirical</i> method, such as AM1 or PM3, the
+QMbasis is ignored.
+<p>
+
+<a NAME="LT1">
+<strong>QM/MM MD simulation</strong>
+<p>
+We now perform a short 1ps QM/MM equilibration simulation of the system. 
+<p>
+<font color=red>localhost:~>grompp -f qmmm1.mdp -p qmmm.top -n
+qmmm.ndx -c qmmm1.gro
+<p>
+<font color=red>localhost:~>mdrun -v -o
+<a href=./files/qmmm1out.gro><qmmm1out.gro</a>
+</font>
+<p>
+We will use the structure after 1 ps of MD as the starting point
+
+Then, we equilibrate the water and ions for 100 ps, using the
+parameter in <a href=./files/equi_sol.mdp>equi_sol.mpd</a>. The heavy
+atoms of the DNA are <a href=./files/posres.itp>restrained</a>  during the
+solvent equilibration.
+<p>
+<font color=red>localhost:~>grompp -f equi_sol.mdp -p neutral.top -c
+neutral_mini.pdb -n neutral.ndx</font>
+<p>
+<font color=red>localhost:~>mdrun -v -o neutral_sol_equi.pdb
+</font>
+<p>
+The result of the solvent equilibration on the A20T20 oligomer is
+available <a href=files/neutral_sol_equi.pdb>here</a>.
+
+<p>
+<table>
+<tr>
+<td>Next:</td><td><a HREF="md.html#top">IV. Performing a QM/MM simulation of the system with Gromacs</a></td></tr> <td>Previous:</td><td><a
+HREF="tutorial.html"> II. Equilibration of the DNA
+</a></td></tr>
+</table>
+
+<p>
+<a HREF="#top">back to top</a>
+<p>
+<hr size="1"><p> updated 28/10/08 
+
+
+</body>
+</html>
+

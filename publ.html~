@@ -1,0 +1,32 @@
+<html>
+<head>
+<title>my publications</title>
+</head>
+<body  bgcolor="#bbdddd" TEXT=000088 LINK=880000 VLINK=440000 ALINK=FFFFFF><font FACE=Arial>
+<h1><b><font FACE="Comic Sans MS,Arial" SIZE=6 > Publications </font></b></h1>
+<p>
+<hr SIZE=1>
+<table CELLSPACING=0 CELLPADDING=0 BORDER=0><tr><td VALIGN=TOP><font FACE=Arial SIZE=4>
+<a HREF=index.html>Main</a>&nbsp;|&nbsp;</td>
+<td VALIGN=TOP><font FACE=Arial SIZE=4><a HREF=cv.html>Curriculum vitae</a> |
+<a HREF=publ.html>publications</a> |
+<a HREF=content.html>gromacs-sheets</a> | <a href="qmmm.html">qm/mm</a> |
+<a HREF=lnks.html>links</a></td></tr></table>
+<hr SIZE=1></font>
+<p>
+My publications. 
+
+<p><hr SIZE=1></font>
+
+<tr><td><b>G. Groenhof, M.F. Lensink, J.G. Snijders, H.J.C. Berendsen and A.E. Mark. </b></br>
+Signal Transduction in the Photoactive Yellow Protein. I: Photon
+Absorption and the Isomerization of the Chromophore.<br>
+Proteins: Structure, Function, and Genetics, 48 (2002), 202-211.
+</td><td></td></tr> <p> <tr><td><b>G. Groenhof, M.F. Lensink,  H.J.C. Berendsen and A.E. Mark. </b></br> Signal Transduction in the Photoactive Yellow Protein. II: Proton Transfer Initiates Conformational Changes. <br> Proteins: Structure, Function, and Genetics, 48 (2002), 212-223.</td><td></td></tr> 
+</td><td></td></tr> <p> <tr><td><b>G. Groenhof, M. Bouxin-Cademartory, B. Hess, S.P. de Visser, H.J.C. Berendsen, M. Olivucci, A.E. Mark and M.A. Robb. </b></br>
+Photoactivation of the Photoactive Yellow Protein: Why photon absorption triggers a trans-to-cis isomerization of the chromophore in the protein. <br> Journal of the American Chemical Society, 126 (2004), 4228-4233.
+</td><td></td></tr> 
+
+<hr size="1"> 
+updated 08/04/04
+</body> </html>

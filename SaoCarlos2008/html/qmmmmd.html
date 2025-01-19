@@ -1,0 +1,62 @@
+<html>
+<head>
+  <title>QM/MM tutorial</title>
+</head>
+ <body bgcolor="#bbdddd" text="#000088" link="#880000" vlink="#440000" alink="#f
+fffff">
+
+<h1><font face="Arial"><b><font face="Comic Sans MS,Arial" size="6"> QM/MM tutorial</font></b></font></h1>
+
+ 
+<hr size="1"> <p> 
+QM/MM calculations on thymine dimer repair.
+<p>
+<hr size="1"> 
+
+
+<a NAME="top">
+<h1>IV. Performing a QM/MM simulation of the system with Gromacs</h1>
+<p>
+<a NAME="intro">
+<strong>QM/MM MD simulation</strong>
+<p>
+We now perform a short 1ps QM/MM (AM1/Amber99) equilibration simulation of the
+system.
+<p>
+For this part, we need a special mdrun binary that has been linked with the mopac library. You can download this binary here <a href=http://wwwuser.gwdg.de/~ggroenh/mdrun >mdrun</a>. 
+<p>
+To make the mdrun binary executable, use
+<p>
+<font color=red>localhost:~>chmod +x mdrun</font>
+<p>
+We keep using the normal grompp version. 
+<p>
+<font color=red>localhost:~>grompp -f <a href=../files/qmmm1.mdp>qmmm1.mdp</a> -p <a href=../files/qmmm.top>qmmm.top</a> -n
+qmmm.ndx -c qmmm1.gro</font>
+<p>
+<font color=red>localhost:~>mdrun -v -c
+<a href=../files/qmmm1out.gro>qmmm1out.gro</a>
+</font>
+<p>
+In the next step we will use the structure after 1 ps to investigate
+the effect of an excess electron on the stability of the thymine
+dimer.
+<p>
+<table>
+<tr>
+<td>Next:</td><td><a HREF="electron1.html#top">V. The effect of an
+electron uptake
+I</a></td></tr> <td>Previous:</td><td><a HREF="qmmm.html">
+III. Setting up the system for QM/MM simulation
+</a></td></tr>
+</table>
+
+<p>
+<a HREF="#top">back to top</a>
+<p>
+<hr size="1"><p> updated 28/10/08 
+
+
+</body>
+</html>
+

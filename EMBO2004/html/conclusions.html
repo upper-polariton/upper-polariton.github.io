@@ -1,0 +1,136 @@
+<html>
+<head>
+  <title>QM/MM tutorial</title>
+</head>
+ <body bgcolor="#bbdddd" text="#000088" link="#880000" vlink="#440000" alink="#ffffff">
+
+<h1><font face="Arial"><b><font face="Comic Sans MS,Arial" size="6"> QM/MM tutorial</font></b></font></h1>
+
+ 
+<hr size="1"> <p> 
+QM/MM calculations on a Diels-Alder antibody catalyst.
+<p>
+<hr size="1"> 
+
+
+<a NAME="top">
+<h1>V. Conclusions, Discussion and Outlook</h1>
+<p>
+We have performed a number of QMMM calculations on a Diels-Alder
+cycloaddition. We have seen that the reaction barrier decreases when
+going from vacuum to water and from water to the catalytic
+antibody. The conclusion so far are that the protein catalyzes the
+cycloaddition by stabilizing the transition state with respect to the
+reactant state. See table 5 and figure 9 for details. However, there a
+few critical points that have not been addressed.
+
+
+<table border="0" width="100%" cellpadding="10">
+<tr>
+
+<td width="30%" valign="top" align="left">
+<a NAME="tab5">
+<blockquote>
+<i><strong>Table 5.</strong></i> Relative Energies of the
+<br>reactant, transition state and product<br>geometries in
+<i>vacuo</i>, water and the<br>protein at the PM3/GROMOS96<br>QM/MM
+level. The energies are<br>reported in kJ/mol and are taken<br>
+relative to the potential energy of the<br>reactants.
+<p>
+<table border="1">
+<tr>
+<td></td><td><i>vacuo</i></td><td>water</td><td>protein</td></tr>
+<td>Reactant</td><td>0.0</td><td>0.0</td><td>0.0</td></tr>
+<td>Trans. St.</td><td>192.902</td><td>139.5</td><td>113.5</td></tr>
+<td>Product</td><td>-45.45</td><td>-69.3</td><td>-144.4</td></tr>
+</table>
+</blockquote>
+</td>
+
+<td width="70%" valign="top" allign="left">
+<a NAME="fig9">
+<blockquote>
+<img SRC=prot_wat_vac_small.gif ALT="" >
+</blockquote>
+
+<blockquote>
+<i><strong>Figure 9.</strong></i> Energy profiles for the Diels Alder
+cycloaddition in<br>vacuum, in water and in the active site of the
+catalytic antibody,<br>calculated at the PM3/GROMOS QM/MM level.
+</blockquote>
+
+</td>
+
+</tr>
+</table>
+
+<p>
+First of all, we have used a Steepest Descent algorithm to do the
+energy minimizations. This algorithm, however, is known not to
+converge very well near a minimum. This was one of the reasons for
+increasing the convergence criteria. A better algortithm for
+minimization would be the BFGS algorithm, which employs higer order
+derivatives, but is much more expensive in terms of computational
+costs. It would give more accurate results though, which is the
+primary reason for using it.
+<p>
+Second, the results happen to be very sensitive with respect to the
+initial conditions. Slighly different starting configurations would
+result in different potential energy curves. This is another
+consequence of using the simple Steepest Descent method for
+minimization.
+<p>
+Third, real reaction barriers are Free Energy barriers. With the
+current setup for the Linear Transit is is possible to do a free
+energy calculation. We need to define a State A and a State B, where A
+and B represent the reactant and product configuration
+respectively. The constraint between the Dummy atoms in state A would
+be 0.14 and in state B 0.3. To actually perform a QM/MM Free Energy
+calculation, one needs to specify both the A and B state parameters in
+the constraint section of the topology file:
+<blockquote>
+<font face="courier" color=black>
+[ constraints ] <br> 
+; atom1 atom2 type stateA stateB<br>
+dummy1 dummy2    2   0.14  0.3  <br>
+</font>
+</blockquote>
+Furthermore, one needs to 'tell' gromacs it is supposed to do a free
+energy perturbation calculation by addig the lines (see <a HREF=http://www.gromacs.org/documentation/reference_3.1/online/mdp_opt.html#free>gmx manual</a>).
+<blockquote>
+<font face="courier" color=black>
+free_energy = yes<br>
+init_lambda = 0<br>
+delta_lambda = 0.01<br>
+</font>
+</blockquote>
+to the mdp file. The calculations will be more time consuming, but the
+result is the free energy curve of the reaction, which is easier to
+relate to experimental data than the potential energy curves we
+computed thus far. But the tutorial was aimed to give a more
+qualitative picture of the reaction rather than a quantitative one.
+<p>
+We hope you enjoyed doing this tutorial and that you found it useful
+for your own work now or in the future. Of course, the system used in
+the tutorial was a rather easy starting point as the transition state
+analogue was known, but the techniques you learned should work without
+such knowledge as well. If, while performing QM/MM calculations you
+run into trouble, or would like to discuss something, you can always
+contact me.
+
+<p>
+<table>
+<tr>
+<td>Previous:</td><td><a HREF="qmmmprotein.html#top">IV. Optimization
+of product, reactant and transition state geometries in the fully
+solvated protein, using Linear Transit in gromacs</a></td></tr>
+</table>
+<p>
+<a HREF="#top">back to top</a>
+<p>
+<hr size="1"><p> updated 07/09/04 
+
+
+</body>
+</html>
+

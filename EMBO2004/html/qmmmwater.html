@@ -1,0 +1,314 @@
+<html>
+<head>
+  <title>QM/MM tutorial</title>
+</head>
+ <body bgcolor="#bbdddd" text="#000088" link="#880000" vlink="#440000" alink="#ffffff">
+
+<h1><font face="Arial"><b><font face="Comic Sans MS,Arial" size="6"> QM/MM tutorial</font></b></font></h1>
+
+ 
+<hr size="1"> <p> 
+QM/MM calculations on a Diels-Alder antibody catalyst.
+<p>
+<hr size="1"> 
+
+
+<a NAME="top">
+<h1>III. Optimization of product, reactant and transition state
+geometries in water, using Linear Transit in gromacs</h1>
+<p>
+<a NAME="intro">
+<strong>Introduction</strong>
+<p>
+We are now going to see how reaction barrier changes when we solve the
+reactants in water. Since water is a polar solvent we can anticipate
+that there will be an effect of some sort. In this part we first
+create and equilibrate a simulation box with the reactants and water
+molecules. Then we perform a Linear Transit calculation, using the
+reaction coordinate of the <a HREF=./qmmmvacuum.html#top>previous
+step</a> (<a HREF=qmmmvacuum.html#fig3>figure 3</a>).
+<p>
+<a NAME="qmmm">
+<strong>QM/MM subdivision</strong>
+<p>
+The system consists of the two reactant molecules solvated in water
+and one Na+ ion. The ion compensates the overall charge of -1 on the
+aliphatc tail (-R, <a HREF=introduction.html#fig1>figure 1</a>)). This
+system is way too big to be treated at the QM level. Therefore we
+divide the system in a small QM part and a much bigger MM part. The QM
+part consists of the reactants, without the aliphatic tail and is
+described again at the <i>semi-empirical</i> PM3 level, while the
+remainder is modelled with the GROMOS96 forcefield. Figure 6 shows the
+subdivision used in this part of the tutorial.
+
+<a NAME="fig6"> 
+<blockquote>
+<img src=qmmm_wat_small.gif alt="" >
+</blockquote>
+
+<blockquote>
+<i><strong>Figure 6.</strong></i> Division of the system in a QM
+subsystem and an MM subsystem. The QM subsystem is described at the
+<i>semi-empirical</i> QM level,<br>while the remainder of the system,
+consisting of the reactants' aliphatic tail, the water molecules and
+the Na+ ion, is modeled with the GROMOS96<br>forcefield.
+</blockquote>
+
+<p>
+In this part of the tutorial we are going to perform again a Linear
+Transit calculation, but this time, the reactants are fully
+solvated. The details on how to perform a QM/MM Linear transit
+calculations in gromacs were discussed <a HREF=qmmmvacuum.html#qmmmhowto>previously</a>.
+<p>
+<a HREF="#top">back to top</a>
+<p>
+<hr size="1">
+<p>
+
+<a NAME="LT">
+<h1>Finding product, reactant and transition state geometries in
+water, using Linear Transit</h1>
+
+The starting structure for this calculation is the transition-state
+analogue form the x-ray model, we have modified in the <a
+HREF=./qmmmvacuum.html#LT>previous part</a> of this tutorial. Then we
+place this structure in the center of a periodic box and fill that box
+with 2601 SPC water molecules and 1 Na+ ion. The total system is
+equilibrated, before the Linear transit computation is performed. As
+before we will skip this tedious procedure, which has nothing to do
+with QM/MM, and use the results instead (<a
+HREF=../water/confin.gro>confin.gro</a>). The steps we took in the
+equilibration process are described <a
+HREF=../water/equilibrate.html>here</a>.
+<p>
+We will again make use of scripts to perform the Linear Transit. 
+<a NAME="scr">
+<ul>
+<li><a HREF=../water/create_tops.scr>create_tops.scr</a>
+
+<li><a HREF=../water/run.scr>run.scr</a>
+
+<li><a HREF=../water/get_ener.scr>get_ener.scr</a>
+</ul>
+The create_tops.scr and the run.scr script are identical to the ones
+we used before, but the get_energies.scr script is slightly
+different. In vacuum we could simple take the total potential
+energy. In the water, and later in the protein, we don't want to know
+the potential energy of the complete system, but rather the internal
+energy of the reactans plus the contributions from the interaction of
+the reactants with the surroundings. So what we want is
+E(reactants)+E(reactant-solvent)+E(reactants-NA+).  
+
+<p>
+
+<ul>
+<li TYPE=1>We start again by creating a topology. In this case we only
+need to add to the topol.top a line stating how many waters there are,
+how many and what type of ion we have. We also need to add include
+statements for the water model and ion model we use:
+<blockquote>
+<font face="courier" color=black>#include ions.itp</font><br> <font
+face="courier" color=black>#include flex_spc.itp</font> </blockquote>
+A complete topology file should look like this <a
+HREF=../water/topol.top>topol.top</a>, which is available for
+download.
+<p>
+<li TYPE=1>We then need an index file and an mdp file. The only
+difference with the files we used in the previous part of this
+tutorial is that now the water molecules and ion are included. We will
+not create them ourselves now, but use the ones available (<a
+HREF=../water/index.ndx>index.ndx</a>, <a
+HREF=../water/LT.mdp>LT.mdp</a>)instead.
+<p>
+<li TYPE=1>Now that we have the input files and scripts, we will
+perform the Linear Transit calculation. This time, we let the reaction
+coordinate vary in two stages. First, we go from 0.15 to 0.4 nm in 200
+steps. Then we do an additional calculation in which we go down from
+0.15 to 0.12 in 50 steps. When both stages are done we put the
+outcomes together in one graph. The reason for performing two seperate
+Linear Transits, instead of only one, is that it is very hard to get a
+converged structure starting at 0.12 nm on the reaction
+coordinate. Much better convergence is achieved when starting at 0.15
+nm, the value of the reaction coordinate in the starting structure(<a
+HREF=../water/confin.gro>confin.gro</a>) and slowly go down to 0.12
+nm. Also note that we use a more loose convergence criterium for the
+minimization of the points (<font face="courier" color=black>emtol =
+600)</font> in the LT.mdp file). The system is much bigger than
+before, and therefore harder too mimimize.
+<p>
+<ul>
+<li> create a new subdirectory for the Linear Transit in water:
+<p>
+<font color=red>localhost:~>mkdir LTwater</font>
+<p>
+<li>download the <a HREF="#scr">scripts</a>, <a
+HREF=../water/confin.gro>confin.gro</a>, <a
+HREF=../water/topol.top>topology</a>, <a
+HREF=../water/index.ndx>index</a> and <a
+HREF=../water/LT.mdp>LT.mdp</a> into that directory
+<p>
+<li>create two additional subdirectories in the LTwater water
+subdirectory, one for increasing and one for the decreasing the
+reaction coordinate:
+<p>
+<font color=red>localhost:~>mkdir up</font><p> <font color=red>localhost:~>mkdir down</font>
+<p>
+
+
+<li>go into the up subdir and execute the create_tops.scr scripts to
+create 201 subdirectories (called step_0, ..., step_200) and create a
+topol_A.itp with different constraints lengths in the range 0.15 to
+0.4 nm.<p> <font color=red>localhost:~>cd up</font><p><font color=red>localhost:~>../create_tops.scr 0.15 0.4 200</font>
+<p>
+<li>execute the run.scr scripts to run the minimizations in the
+different subdirectories (called step_0, ..., step_200). To speed up
+the convergence, the script takes the output coordinates of the
+previous Linear Transit point as input in the current minimization<p>
+<font color=red>localhost:~>../run.scr 0.15 0.4 200</font>
+<p>
+This will take a while, depending on the speed of your computer
+system.
+<p>
+<li>execute the get_ener.scr script to retrieve the energies from the
+individual linear transit points. Redirect the output to a file, let's
+call it eqmmm.xvg.<p> <font color=red>localhost:~>../get_ener.scr 0.15
+0.4 200 > eqmmm.xvg</font>
+<p>
+<li>Next we go back one subdir back and enter the down subdir to do
+the other linear transit.
+<p>
+<font color=red>localhost:~>cd ../down </font>
+<p>
+execute the create_tops.scr scripts again to
+create 51 subdirectories (called step_0, ..., step_50) and create a
+topol_A.itp with different constraints lengths in the range 0.15 to
+0.12 nm.
+<p>
+<font color=red>localhost:~>../create_tops.scr 0.15 0.12 50</font>
+<p>
+<li>execute the run.scr scripts to run the minimizations in the
+different subdirectories (called step_0, ..., step_50). To speed up
+the convergence, the script takes the output coordinates of the
+previous Linear Transit point as input in the current minimization<p>
+<font color=red>localhost:~>../run.scr 0.15 0.12 50</font>
+<p>
+This will also take a while.
+<p>
+<li>execute the get_ener.scr script to retrieve the energies from the
+individual linear transit points. Redirect the output to a file, let's
+call it eqmmm.xvg.<p> <font color=red>localhost:~>../get_ener.scr 0.15
+0.12 50 > eqmmm.xvg</font>
+<p>
+</ul>
+<p>
+<li TYPE=1>We now have a look at the result of the Linear Transit.
+<p>
+<ul>
+
+<li>Go back one subdir and import up/eqmmm.xvg and down/eqmmm.xvg in
+xmgr to see the energy as a function of the reaction
+coordinate.<p><font color=red>localhost:~>xmgr down/eqmmm.xvg up/eqmmm.xvg</font>
+
+<blockquote>
+<img SRC=../water/eqmmm.jpg ALT=""> 
+</blockquote>
+
+The maximum is at 0.20875 nm (-1062.9 kJ/mol). This corresponds to
+point 47 in the up subdirectory. Let's have a look at that
+structure. We simply go into the directory up/step_47 and use editconf
+to convert the confout.gro into confout.pdb <p><font color=red>localhost:~>editconf -f
+confout.gro -o confout.pdb</font>
+<p>
+We then use rasmol to visualize the structure:
+<p><font color=red>localhost:~>rasmol confout.pdb</font>
+
+<blockquote>
+<img SRC=../water/rasmolTS.jpg ALT=""> 
+</blockquote>
+<p>
+We show the first shell of water. 
+<ul>
+<li>RasMol>restrict within(6.0,1)
+<li>RasMol>zoom 600
+<li>RasMol>wireframe 40
+</ul>
+<p>
+Clearly there are many water molecules interacting with the molecule.
+<p>
+The minima are at 0.335 nm (-1202.4 kJ/mol) and 0.15125 nm
+(-1271.7 kJ/mol) and correspond to the reactant and product states
+respectively.
+<p>
+Now, we plot the energy curve we obtained previously for the reaction
+in <i>vacuo</i> in the same figure to see the effect of the water on
+the energetics of the reaction. We modify a bit the offset of the
+vacuum curve to make the comparison easier.
+<blockquote>
+<img SRC=../water/water_vac.jpg ALT=""> 
+</blockquote>
+<p>
+Water is destabilizing the reactants relative to the product and
+transition state, making it energetically easier for the reactants to
+reach the transition state and form product. However, the reactants
+first have to find each other, and then stay together long enough for
+reaching the transition state. This is an entropic effect which can be
+estimated by different techniques. We will not do that here, as it is
+outside the scope of this tutorial.
+
+</ul>
+</ul>
+<p>
+<a HREF="#top">back to top</a>
+
+<p><hr size="1"> <p>
+
+<a NAME="conc">
+<h1>Conclusions</h1>
+
+<p>
+We have now found the geometries and energies of the transition state,
+the reactant state and the prodcut state of the Diels-Alder
+cycloaddition in water. Table 3 lists the QM/MM energies of these
+geomtries.
+
+<a NAME="tab3">
+<blockquote>
+<i><strong>Table 3.</strong></i> Energies of the reactant,<br>
+transition state and product geom-<br>etries in water at the<br>
+PM3/GROMOS96 QM/MM level.<br>The last column lists the energy<br>
+differences with respect to the<br>reactant state.
+<p>
+<table border="1">
+<tr>
+<td></td><td>E (kJ/mol)</td><td>&#916E (kJ/mol)</td></tr>
+<td>Reactant</td><td>-1202.4</td><td>0.0</td></tr>
+<td>Trans. St.</td><td>-1062.9</td><td>139.5</td></tr>
+<td>Product</td><td>-1271.7</td><td>-69.3</td></tr>
+</table>
+
+</blockquote>
+
+
+<p>
+<table>
+<tr>
+<td>Next:</td><td><a HREF="qmmmprotein.html#top">IV. Optimization of
+the product, reactant and transition state geometries in the fully
+solvated protein, using Linear Transit in gromacs</a></td></tr>
+<td>Previous:</td><td><a HREF="qmmmvacuum.html#top">III. Optimization
+of the product, reactant and transition state geometries in
+<i>vacuo</i>, using Linear Transit in gromacs</a></td></tr>
+</table>
+
+<p>
+<a HREF="#top">back to top</a>
+<p>
+<hr size="1"><p> updated 07/09/04 
+
+
+</body>
+</html>
+
+
+
+

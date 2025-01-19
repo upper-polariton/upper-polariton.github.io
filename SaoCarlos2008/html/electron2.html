@@ -1,0 +1,97 @@
+<html>
+<head>
+  <title>QM/MM tutorial</title>
+</head>
+ <body bgcolor="#bbdddd" text="#000088" link="#880000" vlink="#440000" alink="#f
+fffff">
+
+<h1><font face="Arial"><b><font face="Comic Sans MS,Arial" size="6"> QM/MM tutorial</font></b></font></h1>
+
+ 
+<hr size="1"> <p> 
+QM/MM calculations on thymine dimer repair.
+<p>
+<hr size="1"> 
+
+
+<a NAME="top">
+<h1>VII. The effect of electron uptake II, enhanced sampling with
+chemical flooding</h1>
+<p>
+<a NAME="intro">
+<strong>QM/MM MD with a flooding potential</strong>
+<p>
+We apply the flooding potential in all collective degrees of freedom
+and continue the QM/MM simulation. We use the last frame of the
+previous QM/MM simulation as a starting structure for the flooding
+run:
+<p>
+<font color=red>localhost:~>grompp -f
+<a href=../files/qmmm2.mdp>qmmm2.mdp</a> -p qmmm.top -n qmmm.ndx -c
+<a href=../files/qmmm2out.gro>qmmm2out.gro</a></font>
+<p>
+<font color=red>localhost:~>mdrun -v -c
+<a href=../files/qmmm3out.gro>qmmm3out.gro</a> -ei <a href=../files/sam.edi>sam.edi</a>
+</font>
+<p>
+The last frame of the flooding simulation is shown in Figure 5. We see
+that both covalent bonds between the bases are broken. However, there
+is still an excess electron on one of the bases, which is reflected by
+the sp3 hybridization of the pyrimidine nitrogen atom.
+
+<a NAME="fig5">
+<blockquote>
+<img SRC=../images/qmmmflood.png ALT="" >
+</blockquote>
+
+<blockquote>
+<i><strong>Figure 5.</strong></i> With the flooding potential the
+thymine dimer is completely broken within 2 ps.
+</blockquote>
+<p>
+In reality, the electron is transferred back, either to the FADH
+cofactor in Photolyase, or to an adjacent base in the DNA strand. To
+account for this back-transfer in our simulation, we continue the
+simulation from the last frame, using the old
+<a href=../files/qmmm1.mdp>mdp file</a> for the neutral singlet QM
+subsystem.
+<p>
+<font color=red>localhost:~>grompp -f
+<a href=../files/qmmm1.mdp>qmmm1.mdp</a> -p qmmm.top -n qmmm.ndx -c
+qmmm3out.gro</font>
+<p>
+<font color=red>localhost:~>mdrun -v -c
+<a href=../files/qmmm4out.gro>qmmm4out.gro</a> </font>
+<p>
+
+
+The last frame of the simulation is shown in Figure 6. We see that the
+DNA is completely restored!
+<p>
+
+<a NAME="fig6">
+<blockquote>
+<img SRC=../images/qmmm3.png ALT="" >
+</blockquote>
+
+<blockquote>
+<i><strong>Figure 6.</strong></i> Restored DNA. 
+</blockquote>
+<p>
+<table>
+<tr>
+<td>Next:</td><td><a HREF="conclusion.html#top">VIII. Concluding
+remarks</a></td></tr> <td>Previous:</td><td><a HREF="flood.html">
+VI. Setting up Chemical Flooding
+</a></td></tr>
+</table>
+
+<p>
+<a HREF="#top">back to top</a>
+<p>
+<hr size="1"><p> updated 28/10/08 
+
+
+</body>
+</html>
+

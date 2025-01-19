@@ -1,0 +1,326 @@
+<html>
+<head>
+  <title>QM/MM tutorial</title>
+</head>
+ <body bgcolor="#bbdddd" text="#000088" link="#880000" vlink="#440000" alink="#ffffff">
+
+<h1><font face="Arial"><b><font face="Comic Sans MS,Arial" size="6"> QM/MM tutorial</font></b></font></h1>
+
+ 
+<hr size="1"> <p> 
+QM/MM calculations on a Diels-Alder antibody catalyst.
+<p>
+<hr size="1"> 
+
+
+<a NAME="top">
+<h1>IV. Optimization of product, reactant and transition state
+geometries in the fully solvated protein, using Linear Transit in
+gromacs</h1>
+<p>
+<a NAME="intro">
+<strong>Introduction</strong>
+<p>
+We have seen that in water the energy of the transition state is lower
+that in vacuo, with respect to the reactants. Now we will calculate
+the energy curve in the protein to see the effect of the protein
+environment on the reaction.
+<p>
+<strong>QM/MM subdivision</strong>
+<p>
+The fully solvated protein system is too large for even a
+<i>semi-empirical</i> QM calculation. Therefore, we resort to a QM/MM
+description of the system. The way we split up the system in a small
+QM part and a much bigger MM part, is shown in figure 7. The QM part
+consists of the same atoms as before and is again described at the
+<i>semi-empirical</i> PM3 level of theory. The remainder of the
+system, consisting of the tail part (-R, <a
+HREF=introduction.html#fig1>figure 1</a>) of the reactants, the
+protein, the water molecules and the chloride ions, is modeled with
+the GROMOS96 forcefield.
+ 
+<a NAME="fig7">
+<blockquote>
+<img src=qmmm_small.gif alt="" >
+</blockquote>
+
+<blockquote>
+<i><strong>Figure 7.</strong></i> Division of the system in a QM
+subsystem and an MM subsystem. The QM subsystem is described at the
+<i>semi-empirical</i> QM level,<br>while the remainder of the system,
+consisting of the reactants-aliphatic tail, protein, water molecules
+and ions is modeled with the GROMOS96<br>forcefield.
+</blockquote>
+
+<p>
+In this part of the tutorial we are going to perform a third Linear
+Transit calculation, but this time, the reactants are fully solvated.
+With the QM/MM subdivision shown in figure 7, we will perform the
+third and last Linear Transit computation. The details of how to
+perform such a calculation in gromacs can be reviewed <a
+HREF=qmmmvacuum.html#qmmmhowto>here</a>.
+<p>
+<a HREF="#top">back to top</a>
+<p>
+<hr size="1">
+<p>
+<a NAME="LT">
+<h1>Finding product, reactant and transition state geometries in the
+fully solvated protein</h1>
+<p>
+The starting structure for this calculation is the x-ray model of the
+1CE catalytic antibody by Xu <i>et al.</i>. Remember that in the x-ray
+model, the -R group of the analogue was not resolved. So we need to
+add it ourselves. We take the modified transition-state analogue of <a
+HREF=qmmmvacuum.html#tail>part II</a> of this tutorial and fit it onto
+the analogue in the x-ray model. After the fit, we minimize the tail
+part, keeping the rest of the protein fixed.
+<p>
+Then we place this modified protein model in a periodic box, fill that
+box with water and equilibrate the water. Subsequently, we add 6 Cl-
+ions to compensate the overall net charge of -6 on the protein and
+equilibrate again. The procedure of preparing the system for the QM/MM
+geometry optimization is straightforward, but
+time-consuming. Therefore, we skip fitting and equilibrating and use
+the result (<a HREF=../protein/confin.gro>confin.gro</a>) instead. An
+outline of the preparation is avalaible <a
+HREF=..protein/prep.html>here</a>.
+<p>
+<a NAME="scr">
+And here are the scripts we use this time to perform the Linear
+Transit:
+<p>
+<ul>
+<li><a HREF=../protein/create_tops.scr>create_tops.scr</a>
+
+<li><a HREF=../protein/run.scr>run.scr</a>
+
+<li><a HREF=../protein/get_ener.scr>get_ener.scr</a>
+</ul>
+<ul>
+<p>
+<li TYPE=1>We will work in a new subdirectory, we call LTprotein.<p>
+<ul>
+<li>create the LTprotein subdirectory and go into that
+directory:<p><font color=red>localhost:~>mkdir LTprotein</font><p><font color=red>localhost:~>cd LTprotein</font>
+</ul>
+<p>
+<li TYPE=1>In addition to a starting structure, we need to create an
+index file, an mdp file and a topology file. The topology files we use
+here, were generate automatically with the pdb2gmx programm of
+gromacs. This is described in the <a
+HREF=../protein/prep.html>outline</a> of the preparation procedure,
+which we decided to skip. We will the prepared files instead:
+<p>
+<ul>
+<li type=square><a HREF=../protein/confin.gro>confin.gro</a>;
+<li type=square><a HREF=../protein/topol.top>topol.top</a>;
+<li type=square><a HREF=../protein/topol_A.itp>topol_A.itp</a> (substrate);
+<li type=square><a HREF=../protein/topol_L.itp>topol_L.itp</a> (Light chain);
+<li type=square><a HREF=../protein/topol_H.itp>topol_H.itp</a> (Heavy chain);
+<li type=square><a HREF=../protein/index.ndx>index.ndx</a>;
+<li type=square><a HREF=../protein/LT.mdp>LT.mdp</a>.
+<p>
+</ul>
+
+Note we will not use the topol_A.itp, but instead create a new one
+with a different constraint length for the reaction coordinate for
+every point of the Linear Transit.
+<p>
+<ul>
+<li>download all these files and the scripts into the LTprotein
+subdirectory.
+<p>
+</ul>
+<li TYPE=1>Now that we have the input files and scripts, we will
+perform the Linear Transit calculation. We let the reaction coordinate
+vary in two stages again. First, we go from 0.15 to 0.4 nm in 200
+steps. Then we do an additional calculation in which we go down from
+0.15 to 0.12 in 50 steps. 
+<p>
+<ul>
+<li>create two additional subdirectories in the LTprotein
+subdirectory, one for increasing and one for the decreasing the
+reaction coordinate:
+<p>
+<font color=red>localhost:~>mkdir up</font><p> <font color=red>localhost:~>mkdir down</font>
+<p>
+<li>go into the up subdir and execute the create_tops.scr scripts to
+create 101 subdirectories (called step_0, ..., step_100) and create a
+topol_A.itp with different constraints lengths in the range 0.12 to
+0.5 nm.<p> <font color=red>localhost:~>cd up</font><p><font
+color=red>localhost:~>../create_tops.scr 0.15 0.4 200</font>
+<p>
+<li>execute the run.scr scripts to run the minimizations in the
+different subdirectories (called step_0, ..., step_100). To speed up
+the convergence, the script takes the output coordinates of the
+previous Linear Transit point as input in the current minimization<p>
+<font color=red>localhost:~>../run.scr 0.15 0.4 200</font>
+<p>
+This will take a while, depending on the speed of your computer
+system.
+<p>
+<li>When the run script is done, we execute the get_ener.scr script to
+retrieve the energies from the individual linear transit
+points. Redirect the output to a file, let's call it eqmmm.xvg.<p>
+<font color=red>localhost:~>../get_ener.scr 0.12 0.4 200 > eqmmm.xvg</font>
+<p>
+<li>Next we go back one subdir back and enter the down subdir to do
+the other linear transit.
+<p>
+<font color=red>localhost:~>cd ../down</font>
+<p>
+and execute the create_tops.scr scripts again to create 51
+subdirectories (called step_0, ..., step_50) and create a topol_A.itp
+with different constraints lengths in the range 0.15 to 0.12 nm.
+<p>
+<font color=red>localhost:~>../create_tops.scr 0.15 0.12 50</font>
+<p>
+<li>execute the run.scr scripts to run the minimizations in the
+different subdirectories (called step_0, ..., step_100). To speed up
+the convergence, the script takes the output coordinates of the
+previous Linear Transit point as input in the current minimization<p>
+<font color=red>localhost:~>../run.scr 0.15 0.12 50</font>
+<p>
+This will take a while again.
+<p>
+<li>afterwards, we execute the get_ener.scr script again, to retrieve
+the energies from the individual linear transit points. Redirect the
+output to a file, let's call it eqmmm.xvg.<p>
+<font color=red>localhost:~>../get_ener.scr 0.15 0.12 50 > eqmmm.xvg</font>
+</ul>
+<p>
+<li TYPE=1>When both stages of the Linear Transit are done, we can see
+the results.
+<p>
+<ul>
+<li>Go back one subdir and import up/eqmmm.xvg and down/eqmmm.xvg in
+xmgr to see the energy as a function of the reaction
+coordinate.<p><font color=red>localhost:~>xmgr up/eqmmm.xvg down/eqmmm.xvg</font>
+
+<blockquote>
+<img SRC=../protein/eqmmm.jpg ALT=""> 
+</blockquote>
+
+The maximum is at 0.21 nm (-1102.9 kJ/mol). This corresponds
+to point 48 in the up subdirectory. Let's have a look at that
+structure. We simply go into the directory up/step_48 and use editconf
+to convert the confout.gro into confout.pdb <p><font color=red>localhost:~>editconf -f
+confout.gro -o confout.pdb</font>
+<p>
+We then use rasmol to visualize the structure:
+<p><font color=red>localhost:~>rasmol confout.pdb</font>
+
+<blockquote>
+<img SRC=../protein/rasmolTS.jpg ALT=""> 
+</blockquote>
+<p>
+We zoom a bit in on the active site, showing interacting residues and
+ water molecules:
+<ul>
+<li>RasMol>restrict within(5.0,dat) AND water
+<li>RasMol>wireframe 30
+<li>RasMol>select dat
+<li>RasMol>wireframe 50
+<li>RasMol>center dat
+<li>RasMol>zoom 600
+<li>RasMol>select backbone AND NOT *.O
+<li>RasMol>cartoons
+<li>RasMol>colour structure
+<li>RasMol>select 266,271
+<li>RasMol>wireframe 40
+</ul>
+<p>
+The minima are at 0.306250 nm (-1216.4 kJ/mol) and 0.15 nm
+(-1360.8 kJ/mol) and correspond to the reactant and product states
+respectively. Figure 8 shows the reactant, transition and product
+states of the system.
+
+<blockquote>
+<img SRC=../protein/proteinLT_small.jpg ALT="">
+</blockquote>
+
+<blockquote>
+<i><strong>Figure 8.</strong></i> Reactant (a), Transition State (b)
+and Product (c) geometries in the active site of the catalytic
+antibody, found with the Linear<br>Transit method. The energies of these
+structures are listed in table 4.
+</blockquote>
+
+<p>
+Now, we plot the energy curves in vacuo, water and te protein all in
+the same figure. We manipulate the offsets of the curves to make the
+comparison easier.
+<blockquote>
+<img SRC=../protein/prot_wat_vac.jpg ALT=""> 
+</blockquote>
+<p>
+The protein is is stabilizing the transition state relative to
+reactants even more that the water. The reaction rate therefore should
+be highest in the protein. Note however that alse here the entropic
+contribution is not included. The reactants need to be bound by the
+protein first to form the reactive protein-substrate complex. These
+steps can be studied with different simulation techniques.
+
+
+
+</ul>
+</ul>
+
+<p>
+<a HREF="#top">back to top</a>
+
+<p><hr size="1"> <p>
+
+<a NAME="conc">
+<h1>Conclusions</h1>
+
+<p>
+We have now found the geometries and energies of the transition state,
+the reactant state and the prodcut state of the Diels-Alder
+cycloaddition in the active site of the catalytic Diels-Alderase
+antibody. Table 4 lists the total QM/MM energies of these geomtries.
+
+<a NAME="tab4">
+<blockquote>
+<i><strong>Table 4.</strong></i> Energies of the reactant,<br>
+transition state and product geom-<br>etries in the solvated protein
+at the<br>PM3/GROMOS96 QM/MM level.<br>The last column lists the
+energy<br> differences with respect to the<br>reactant state.
+<p>
+<table border="1">
+<tr>
+<td></td><td>E (kJ/mol)</td><td>&#916E (kJ/mol)</td></tr>
+<td>Reactant</td><td>-1216.4</td><td>0.0</td></tr>
+<td>Trans. St.</td><td>-1102.9</td><td>113.5</td></tr>
+<td>Product</td><td>-1360.8</td><td>-144.4</td></tr>
+</table>
+
+</blockquote>
+
+
+<p>
+<table>
+<tr>
+<td>Next:</td><td><a HREF="conclusions.html#top">V. Conclusion,
+Discussion, and Outlook</a></td></tr> <td>Previous:</td><td><a
+HREF="qmmmwater.html#top">III. Optimization of the product, reactant
+and transition state geometries in water, using Linear Transit in
+gromacs</a></a></td></tr>
+</table>
+
+<p>
+<a HREF="#top">back to top</a>
+<p>
+<hr size="1"><p> updated 30/07/04
+
+
+</body>
+</html>
+
+
+
+
+
+
+

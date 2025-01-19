@@ -1,0 +1,174 @@
+
+
+
+<html>
+<head>
+<link rel="stylesheet" href="css/main.css" type="text/css" media="screen" >
+</head>
+<body>
+<div id="box">
+
+<div id="hline"></div>
+
+<div id="header">
+	<h1>Computational Biomolecular Chemistry Group</h1>
+	<h2>understand, predict & design</h2>
+</div>
+
+<div id="hline"></div>
+
+<div id="navigation">
+	<ul>
+		<li><a href="index.html">home</a></li>
+		<li><a href="research.html">research</a></li>
+		<li><a href="people.html">people</a></li>
+		<li><a href="publications.html">publications</a></li>
+		<li><a href="teaching.html">teaching</a></li>
+		<li><a href="software.html">software</a></li>
+                <li><a href="jobs.html">positions</a></li>
+	</ul>
+</div>
+
+<div id="hline"></div>
+
+<div id="main">
+
+
+
+<h1> KEMS4180 (spring 2018) </h1>
+
+F. Mandl, Statistical Physics: Chapter 1, 2, 4, 5, 7, 9,11
+<br>
+T. Hill, Introduction to statistical thermodynamics: <a href="KEMS4180/tst_hill.pdf">chapter 11</a>
+<p>
+<ul>
+<li> <a href="KEMS4180/lecture1.pdf">lecture1.pdf</a></li>
+<li> <a href="KEMS4180/lecture2.pdf">lecture2.pdf</a></li>
+<li> <a href="KEMS4180/lecture3.pdf">lecture3.pdf</a></li>
+<li> <a href="KEMS4180/lecture4.pdf">lecture4.pdf</a></li>
+<li> <a href="KEMS4180/lecture5.pdf">lecture5.pdf</a></li>
+<li> <a href="KEMS4180/lecture6.pdf">lecture6.pdf</a></li>
+<li> <a href="KEMS4180/lecture7.pdf">lecture7.pdf</a></li>
+<li> <a href="KEMS4180/lecture8.pdf">lecture8.pdf</a></li>
+
+
+</ul>
+
+<ul>
+<li><a href="KEMS4180/homework1.pdf">homework1.pdf</a></li>
+<li><a href="KEMS4180/homework2.pdf">homework2.pdf</a> ; <a href="KEMS4180/solutions2.pdf">solutions2.pdf</a></li>
+<li><a href="KEMS4180/homework3.pdf">homework3.pdf</a>; <a href="KEMS4180/solutions3.pdf">solutions3.pdf</a></li>
+<li><a href="KEMS4180/homework4.pdf">homework4.pdf</a>; <a href="KEMS4180/solutions4.pdf">solutions4.pdf</a></li>
+<li><a href="KEMS4180/homework5.pdf">homework5.pdf</a></li>
+<li><a href="KEMS4180/homework6.pdf">homework6.pdf</a></li>
+<li><a href="KEMS4180/homework7.pdf">homework7.pdf</a></li>
+<li><a href="KEMS4180/homework8.pdf">homework8.pdf</a>; <a href="KEMS4180/MC.nb">MC.nb</a></li>
+</ul>
+
+<h1> Summerschool 2017: Nano1 </h1>
+
+<ul>
+<li><a href="http://wwwuser.gwdg.de/~ggroenh/schedule.pdf">schedule.pdf</a>
+</li>
+</ul>
+<h2> reading material </h2>
+<ul>
+<li><a href="http://wwwuser.gwdg.de/~ggroenh/Ullmann2014-book.pdf">Ullmann2014-book.pdf</a>
+</li>
+<li><a href="http://wwwuser.gwdg.de/~ggroenh/Ullmann1999.EBJ28-533.pdf">Ullmann1999.EBJ28-533.pdf</a>
+</li>
+<li><a href="http://wwwuser.gwdg.de/~ggroenh/jctc2011.pdf">jctc2011.pdf</a>
+</li>
+</ul>
+
+<h2> Lectures </h2>
+<ul>
+<li><a href="http://wwwuser.gwdg.de/~ggroenh/Lecture1_NMR-theory.pptx.pdf">Lecture1_NMR-theory.pptx.pdf</a>
+</li>
+
+<li><a href="http://wwwuser.gwdg.de/~ggroenh/Lecture2_Protein-NMR.pptx.pdf">Lecture2_Protein-NMR.pptx.pdf</a>
+</li>
+
+<li><a href="http://wwwuser.gwdg.de/~ggroenh/Lecture3-electrostatics.ppt.pdf">Lecture3-electrostatics.ppt.pdf</a>
+</li>
+
+<li><a href="http://wwwuser.gwdg.de/~ggroenh/Lecture4-pKa-IDP.pptx.pdf">Lecture4-pKa-IDP.pptx.pdf</a>
+</li>
+
+<li><a href="http://wwwuser.gwdg.de/~ggroenh/constant_pH_MD.pdf">constant_pH_MD.pdf</a>
+</li>
+
+
+<re3-electrostatics.ppt.pdful>
+</ul>
+<h2> Demos</h2>
+<ul>
+<li><a href="http://wwwuser.gwdg.de/~ggroenh/Demo-07-08.pdf">Demo-07-08.pdf</a>
+</li> 
+<li><a href="http://wwwuser.gwdg.de/~ggroenh/Demo-08-08.pdf">Demo-08-08.pdf</a>
+</li>
+<li><a href="http://wwwuser.gwdg.de/~ggroenh/IR_practical.pdf">IR_practical.pdf</a><br>
+Link to  <a href="https://docs.google.com/spreadsheets/d/1cURsJGEpok3zN5ctKLlMyogPMGiLxGT_oeJGL-W8OiY/edit#gid=0"> spreadsheet<a>
+</li>
+<li><a href="http://wwwuser.gwdg.de/~ggroenh/Tutorial-pepKalc.pdf">Tutorial-pepK
+alc.pdf</a>
+<li><a href="http://wwwuser.gwdg.de/~ggroenh/Question-about-NMR-studies.pdf">Question-about-NMR-studies.pdf</a>
+</li>
+</ul>
+<h1> Exercises KEMS456 (autumn 2014) </h1>
+<ul>
+<li><a href="http://wwwuser.gwdg.de/~ggroenh/exercise_html/exercise1.html">Free energy tutorial</a></li>
+</ul>
+<h1> Fitting atomic charges in a two-stage RESP procedure</h1>
+<ul>
+<li><a href="http://wwwuser.gwdg.de/~ggroenh/resp/index.html">RESP.key</a></li>
+</ul>
+<h1> PDF files lecture presentations KEMS413 (spring 2013) </h1>
+<ul>
+<li><a href="http://wwwuser.gwdg.de/~ggroenh/kems413a.pdf">kems413a.pdf</a></li>
+</ul>
+<h1> Exercises KEMS413 (spring 2013) </h1>
+<ul>
+<li><a href="http://wwwuser.gwdg.de/~ggroenh/exercise_CI/im.html">exercise 1</a></li>
+<li><a href="http://wwwuser.gwdg.de/~ggroenh/exercise_H2/h2.html">exercise 2</a></li>
+</ul>
+<h1> assignments </h1>
+<ul>
+<li><a href="http://wwwuser.gwdg.de/~ggroenh/assignments/uracil.pdf">Proton Affinity of Uracil</a>
+<li><a href="http://wwwuser.gwdg.de/~ggroenh/assignments/ja00194a059.pdf">Basicity and Nucleophilicity of Carboxylate lone pairs</a>
+<li><a href="http://wwwuser.gwdg.de/~ggroenh/assignments/ja00092a051.pdf">Isomerization of substituted benzenes to Dewar benzene isomers</a>
+<li><a href="http://wwwuser.gwdg.de/~ggroenh/assignments/benzene_photochem.pdf">MCSCF study of S1 and S2 photochemical reactions of Benzene</a>
+<li><a href="http://wwwuser.gwdg.de/~ggroenh/assignments/benzene.pdf">new benzene isomer</a>
+<li><a href="http://wwwuser.gwdg.de/~ggroenh/assignments/PNAS-1997-Rasul-11159-62.pdf">CH5++</a>
+<li><a href="http://wwwuser.gwdg.de/~ggroenh/assignments/JChemPhys_99_3716.pdf">CH+5: The neverending story</a>
+<li><a href="http://wwwuser.gwdg.de/~ggroenh/assignments/JChemPhys_96_1167.pdf">Dissociation of Formic acid</a>
+<li><a href="http://wwwuser.gwdg.de/~ggroenh/assignments/JChemPhys_65_4072.pdf">SCF and CI studies on ground state of water molecule</a>
+<li><a href="http://wwwuser.gwdg.de/~ggroenh/assignments/azulene.pdf">Azulene</a>
+</ul>
+
+<h1> PDF Dateien der Vorlesung und Uebung - Biophysics II</h1>
+<ul>
+<li><a href="http://wwwuser.gwdg.de/~ggroenh/part_I.pdf">part_I.pdf </a></li>
+<li><a href="http://wwwuser.gwdg.de/~ggroenh/exercises_I.pdf">exercises_I.pdf</a></li>
+</ul>
+
+<h1> PDF Dateien der Vorlesung und Uebung - Computational Biophysics I</h1>
+<ul>
+<li><a href="http://wwwuser.gwdg.de/~ggroenh/comp_bio/QM/html/prac_QM.html">Practical Quantum Chemistry</a></li>
+<li><a href="http://wwwuser.gwdg.de/~ggroenh/Comp_bioph_I.pdf">Comp_bioph_I.pdf</a></li>
+</ul>
+</div>
+
+
+<div id="hline"></div>
+
+<div id="footer">
+<h1>
+Groenhof Group 2013<br>
+</h1>
+</div>
+
+<div id="hline"></div>
+
+</body>
+</html>

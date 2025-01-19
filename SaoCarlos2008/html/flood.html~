@@ -1,0 +1,99 @@
+<html>
+<head>
+  <title>QM/MM tutorial</title>
+</head>
+ <body bgcolor="#bbdddd" text="#000088" link="#880000" vlink="#440000" alink="#f
+fffff">
+
+<h1><font face="Arial"><b><font face="Comic Sans MS,Arial" size="6"> QM/MM tutor
+ial</font></b></font></h1>
+
+ 
+<hr size="1"> <p> 
+QM/MM calculations on Thymine Dimer repair.
+<p>
+<hr size="1"> 
+
+
+<a NAME="top">
+<h1>V The effect of electron uptake</h1>
+<p>
+<a NAME="intro">
+<strong>QM/MM setup</strong>
+<p>
+After an electron is transferred to the thymine dimer, the total
+charge of the former neutral QM subsystem is decreased to
+-1<i>e</i>. In addition, the excess electron increases the total spin
+quantum number of the QM subsystem 1/2 to 1. Thus, instead of singlet
+we now have a doublet multiplicity. These changes must be reflected in
+the QM/MM parameters of the mdp file.
+<p>
+<blockquote>
+<font face="courier" color=black >
+QMMM                     = yes<br>
+QMMM-grps                = QMatoms<br>
+QMmethod                 = AM1<br>
+QMbasis                  = sto-3g<br>
+QMMMscheme               = ONIOM<br>
+QMcharge                 = -1<br>
+QMmult                   = 2<br>
+</font>
+</blockquote>
+<p>
+We now perform a short 1ps QM/MM simulation of the system with the
+excess electron
+<p>
+<font color=red>localhost:~>grompp -f
+<a href=./files/qmmm2.mdp>qmmm2.mdp</a> -p qmmm.top -n qmmm.ndx -c
+qmmm1out.gro</font>
+<p>
+<font color=red>localhost:~>mdrun -v -o
+<a href=./files/qmmm2out.gro><qmmm2out.gro</a>
+</font>
+<p>
+From the structure at 1 ps, we see that one of the cyclodutane bonds
+has broken due to the excess electron (Figure 4). To visualize the
+whole process you can convert the trajectory</a> into pdb format that you can read in with pymol.
+<p>
+<font color=red>localhost:~>trjconv -s -f traj.xtc -o
+<a href=./files/traj1.pdb>traj1.pdb</a> 
+</font>
+<p>
+The bond between the C5 atoms on the dimer (Figure 2) is broken. This
+is probably due to the steric repulsion between the methyl groups. The
+covalent bond between the C6 atoms is still intact. Thus, whereas
+there is no barrier for breaking the C5-C5 bond upon electron uptake,
+cleaving the C6-C6 bond is an activated process. The barrier is not
+overcome on the picosecond timescale. To overcome this barrier in a
+short QM/MM MD simulation, we will make use of the chemical flooding
+approach, that is described in the next session.
+
+<a NAME="fig2">
+<blockquote>
+<img SRC=photolyase ALT="" >
+</blockquote>
+
+<blockquote>
+<i><strong>Figure 4.</strong></i> After uptake of an excess electron,
+the cyclobutane ring of the thymine dimer breaks open within 1 ps.
+</blockquote>
+
+
+<p>
+<table>
+<tr>
+<td>Next:</td><td><a HREF="md.html#top">VI. Setting up a flooding
+simulation</a></td></tr> <td>Previous:</td><td><a HREF="tutorial.html">
+IV. Performing a QM/MM simulation of the system with Gromacs
+</a></td></tr>
+</table>
+
+<p>
+<a HREF="#top">back to top</a>
+<p>
+<hr size="1"><p> updated 28/10/08 
+
+
+</body>
+</html>
+

@@ -1,0 +1,130 @@
+<html>
+<head>
+  <title>QM/MM tutorial</title>
+</head>
+ <body bgcolor="#bbdddd" text="#000088" link="#880000" vlink="#440000" alink="#ffffff">
+<font face="Arial"> </font>
+<h1><font face="Arial"><b><font face="Comic Sans MS,Arial" size="6"> QM/MM tutorial</font></b></font></h1>
+ 
+<p> </p>
+<hr size="1"> 
+<table cellspacing="0" cellpadding="0" border="0">
+  <tbody>
+    <tr>
+      <td valign="Top"><font face="Arial" size="4"> <a href="index.html">
+Main</a>&nbsp;|&nbsp;</font></td>
+ <td valign="Top"><font face="Arial" size="4"><a href="cv.html">Curriculum
+vitae</a> | <a href="publ.html">publications</a> | <a href="content.html">
+gromacs-sheets</a> | <a href="qmmm.html">qm/mm</a> | <a href="lnks.html">links</a></font></td>
+    </tr>
+  </tbody>
+</table>
+ 
+<hr size="1"> <p> 
+QM/MM calculations on a Diels-Alder antibody catalyst.
+<p>
+<hr size="1"> 
+
+<a NAME="top">
+<h1>Introduction</h1>
+
+<p>
+
+The essence of biological catalysis is the complementarity between the
+transition state of the process catalyzed and the enzyme. The
+transition state "fits" perfectly into the enzyme's active site pocket
+and is therefore stabilized, which enhances the reaction rate. The
+essence of our immune system is also complementarity, but in this case
+it is the complementarity between the antigen, a compound that should
+not be inside your body, and the antibody. Upon exposure to an antigen
+the immune system generates immunoglobins that can bind the antigen
+and thereby make it harmless. This natural immuno response can be
+exploited to generate so-called antibody catalysts for chemical
+reactions. The immune system is triggered by exposing it to a compound
+that mimicks the transition state of the reaction of interest. Such a
+compound is called a transition state analogue. Even though it
+structurally resembles the transition state, it is a stable molecule.
+The generated immunoglobins will strongly bind to the analogue, and,
+as the analogue is structurally related to the transition state of the
+reaction, the immunoglobins will posses a certain degree of catalytic
+activity for that reaction. 
+
+<blockquote>
+<img SRC=diels-alder.gif ALT="" >
+</blockquote>
+
+<blockquote>
+<i><strong>Figure 1.</strong></i> The Diels-Alder Cyclo-addition
+reaction catalyzed by 1E9, a catalytic antibody raised against a
+transition-state analogue compound.
+
+
+</blockquote>
+
+<p>
+In this tutorial we are going to study a catalytic antibody that
+catalyzes the Diels Alder cyclo-addition reaction shown here. The
+x-ray structure of the analogue-antibody complex has been determined
+by Xu <i>et al</i>. (Science 286 (1999), 2345-2348) and is available
+from the <a HREF=http://www.rcsb.org>protein databank</a>.
+
+
+<blockquote>
+<img SRC=proteins_smaller.jpg ALT="" >
+</blockquote>
+
+<blockquote>
+<i><strong>Figure 2.</strong></i> The 1CE catalytic antibody (a) with a
+close-up of the binding site for the transition state analogue
+molecule (b) and a close-up of the binding site with the optimized
+transition state geometry for the Diels-Alder cycloaddition reaction
+(c). The images were created with <a
+HREF=http://www.avatar.se/molscript>Molscript</a> and <a
+HREF=http://www.bmsc.washington.edu/raster3d/raster3d.html>Raster3D</a>
+</blockquote>
+
+<p>
+The tutorial is aimed at learning the elementary QM and QM/MM skills
+one needs for studying enzymes. The tutorial consists of three parts
+<ul>
+
+<li Type=I> <a HREF=./TS2.html#top>Optimization of the product, reactant and transition state
+geometries in vacuo</a>;
+
+<li Type=I> <a HREF=./TS3.html#top>Optimization of the product, reactant and transition state
+geometries in the fully solvated protein</a>;
+
+<li Type=I> Molecular Dynamics Simulations of the reaction, using the
+transition states as starting points;
+
+<li Type=I> Calculation of the reaction rate based on the Eyring
+equation, using the outcome of the simulations and optimizations.
+
+</ul>
+
+In this tutorial the optimization of the transition states is rather
+straightforward, as the analogue is known. However, if you have never
+optimized a transition state before, the optimizations in this
+tutorial are a good starting point to develop your skills.
+
+<p>
+
+We will use the following computer packages in this tutorial 
+<ul>
+
+<li><a HREF=http://www.gaussian.com>gaussian03 </a> 
+
+<li><a HREF=http://www.gromacs.org>gromacs</a>-<a HREF=http://md.chem.rug.nl/~groenhof/qmmm.html>qm/mm</a>
+
+<li>rasmol
+
+<li>molden
+
+</ul>
+
+<a HREF="#top">back to top</a>
+
+<hr size="1">
+</body>
+</html>
+

@@ -1,0 +1,119 @@
+<html>
+<head>
+  <title>QM/MM tutorial</title>
+</head>
+ <body bgcolor="#bbdddd" text="#000088" link="#880000" vlink="#440000" alink="#ffffff">
+
+<h1><font face="Arial"><b><font face="Comic Sans MS,Arial" size="6"> QM/MM tutorial</font></b></font></h1>
+
+ 
+<hr size="1"> <p> 
+QM/MM calculations on Thymine Dimer repair.
+<p>
+<hr size="1"> 
+
+<a NAME="top">
+<h1>Introduction</h1>
+
+<p>
+Intra-strand thymine dimerization (Figure 1) is recognized as
+the most common process leading to DNA damage under
+ultraviolet (UV) irradiation. The formation of thymine dimers has
+potentially important physiological consequences. This mutagenic
+photoproduct can disrupt the function of DNA and thereby trigger
+complex biological responses, including apoptosis, immune
+suppression, and carcinogenesis.
+
+<a NAME="fig1">
+<blockquote>
+<img SRC=TT.png ALT="" >
+</blockquote>
+
+<blockquote>
+<i><strong>Figure 1.</strong></i> Absorption of UV light leads to the
+formation of a Thymine dimer, as shown in these snapshots from
+an <i>ab initio</i> MD simulation.
+</blockquote>
+
+To survive exposure to UV radiation, organisms have evolved complex
+mechanisms to repair damaged DNA. The initial step is detection of a
+damage spot, the thymine dimer for instance. Subsequently, the dimer
+can be either repaired, or removed. Photolyase is an enzyme that
+detects the dimer site by binding to it and then catalyses the
+splitting of the dimer into the original pyrimidine bases (Figure
+2). Photolyase contains a reduced flavin co-enzyme co-factor that upon
+absorption of UV light donates an electron to the bound Thyime
+dimer. The excess electron destabilizes the dimer, and facilitates the
+slitting of the cyclobutane ring. After the original thymine bases are
+restored, the electron flows back onto the flavin.
+
+<a NAME="fig2">
+<blockquote>
+<img SRC=photolyase ALT="" >
+</blockquote>
+
+<blockquote>
+<i><strong>Figure 2.</strong></i> Photolyase-DNA complex. Photolyase
+uses UV light to catalyze the restoration of the original Thymine
+bases.
+</blockquote>
+
+Thymine dimers can also be restored without the Photolyase. In this
+so-called self-repair process, the dimer splits upon spontaneous
+uptake of an electron. Depending on the base sequence, such electrons
+can be readily available. In this tutorial we will examine this self
+repair process by means of <i>ab initio</i> molecular dynamics
+simulations.
+<p>
+The tutorial is aimed at learning the elementary QM and QM/MM skills
+one needs for studying biological systems. The tutorial consists of
+five parts
+<ul>
+
+<li Type=I> <a HREF=./build.html#top>Building a model of a solvated
+double stranded DNA molecule with a dimer lesion</a>;
+
+<li Type=I> <a HREF=./md.html#top>Equilibration of the DNA
+with gromacs</a>;
+
+<li Type=I> <a HREF=./qmmm.html#top>Setting up the system for QM/MM
+simulation with gromacs</a>;
+
+<li Type=I> <a HREF=./qmmmmd.html#top>Performing a QM/MM simulation of
+the system after electron uptake</a>;
+
+<li Type=I> <a HREF=./pca.html#top>Setting up an enhanced sampling
+simulation by means of chemical flooding</a>;
+
+<li Type=I> <a HREF=./flood.html#top>Performing an enhanced sampling
+simulation of the thymine splitting reaction</a>;
+
+<li Type=I> <a HREF=./conclusions.html#top>Conclusions, Discussion, and
+Outlook</a>
+
+</ul>
+<p>
+
+We will use the following software packages in this tutorial
+<ul>
+
+<li><a HREF=http://www.gromacs.org>gromacs</a>-<a
+HREF=http://md.chem.rug.nl/~groenhof/qmmm.html>qm/mm</a>
+<li><a 
+HREF=http://www.bernstein-plus-sons.com/software/RasMol_2.7.2.1/>rasmol</a>
+HREF=http://pymol.sourceforge.net/>pymol</a>
+
+<li><a
+HREF=ftp://plasma-gate.weizmann.ac.il/pub/xmgr4/src/xmgr-4.1.2.tar.gz>
+Xmgr (ACE/gr)</a>
+
+</ul>
+
+<a HREF="#top">back to top</a>
+
+<hr size="1">
+
+</body>
+</html>
+
+<p> updated 28/10/08

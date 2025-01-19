@@ -1,0 +1,227 @@
+<html>
+<head>
+<title>curriculum vitae</title>
+</head>
+<body  bgcolor="#bbdddd" TEXT=000088 LINK=880000 VLINK=440000 ALINK=FFFFFF><font FACE=Arial>
+<h1><b><font FACE="Comic Sans MS,Arial" SIZE=6 > Curriculum Vitae </font></b></h1>
+<p>
+<hr SIZE=1>
+<table CELLSPACING=0 CELLPADDING=0 BORDER=0><tr><td VALIGN=TOP><font FACE=Arial SIZE=4>
+<a HREF=index.html>Main</a>&nbsp;|&nbsp;</td>
+<td VALIGN=TOP><font FACE=Arial SIZE=4><a HREF=cv.html>Curriculum vitae</a> |
+<a HREF=publ.html>publications</a> |
+<a HREF=content.html>gromacs-sheets</a> | 
+<a href="qmmm.html">qm/mm</a> |
+<a HREF=lnks.html>links</a></td></tr></table>
+<hr SIZE=1></font>
+<p>
+Who I am and what I do.
+
+<p><hr SIZE=1></font>
+
+
+<h1>Personal details</h1>
+
+<table border="0" width="50%" cellpadding="10">
+
+<tr><td>name:</td><td>Gerrit Groenhof</td></tr>
+
+<tr><td>date of birth:</td><td>18 november 1976</td></tr>
+
+<tr><td valign="top">address:</td><td adres>Virkakatu 5E2<br>90570
+Oulu<br>Finland</td></tr>
+
+<tr><td>nationality:</td><td>Dutch</td></tr>
+
+<tr><td>marital status:</td><td>married to Serena Donnini</td></tr>
+
+<tr><td>children:</td><td>Aldo Groenhof
+
+<tr><td>Email:</td><td>g.groenhof@rug.nl</td></tr>
+
+<tr><td>www:</td><td>http://md.chem.rug.nl/~groenhof</td></tr>
+
+</table>
+
+<h1>Education</h1>
+
+<table border="0" width="99%" cellpadding="10">
+
+<tr><td valign="top">1989-1995:</td><td
+valign="top">VWO (Gymnasium)<br>Christelijk Lyceum Almelo</td></tr>
+
+<tr><td valign="top">1995-2000:</td><td valign="top">M.Sc in
+Mathematics and Natural Sciences<br>Dept. of biophysical
+chemistry<br>Molecular Dynamics group (Prof. Dr. Herman
+Berendsen)<br>University of Groningen</td></tr>
+
+<tr><td valign="top">2000-2004:</td><td valign="top">Ph.D. in
+Mathematics and Natural Sciences<br>Dept. of biophysical
+chemistry<br>Molecular Dynamics group (Prof. Dr. Alan
+Mark)<br>University of Groningen
+</td></tr>
+</table>
+
+<h1>Languages</h1>
+
+<table border="0" width="50%" cellpadding="10">
+<tr><td>Dutch:</td><td>mother tongue</td></tr>
+<tr><td>English:</td><td>fluent</td></tr>
+<tr><td>German:</td><td>good</td></tr>
+<tr><td>Italian:</td><td>sufficient</td></tr>
+<tr><td>French:</td><td>sufficient</td></tr>
+</table>
+
+<h1>Scientific interests</h1>
+<ul>
+<li>
+Development and application of QM/MM methods. In particular for
+modelling photochemical processes in large condensed phase systems,
+such as proteins and solvated chromophores.
+</li>
+</ul>
+
+<h1>Computing experience</h1>
+<ul>
+<li>Programming experience in C and Fortran77. Implemented a <a
+HREF="http://md.chem.rug.nl/~groenhof/qmmm.html">QM/MM interface</a>
+in the <a HREF="www.gromacs.org">Gromacs</a> molecular dynamics
+program. Also experience in modifying existing quantum chemistry
+codes, such as Gaussian, GAMESS-UK, and MOPAC. Broad experience on
+different UNIX systems (linux, MacOS X, AIX, Irix), both at the
+administrator and user level, including set-up and maintenance of
+<a HREF=http://www.beowulf.org/>beowulf clusters</a>. 
+</li>
+</ul>
+
+<h1>Publications</h1>
+<table border="0" width="99%" cellpadding="10">
+
+<tr><td valign="top">accepted</td><td valign="top"> D. van der
+Spoel, E. Lindahl, B. Hess, G. Groenhof, A.E. Mark and
+H.J.C. Berendsen<br>
+<i>GROMACS, fast, flexible and free</i><br>
+Journal of computational chemistry</td></tr>
+
+<tr><td valign="top">to be submitted</td><td valign="top">G. Groenhof,
+B. Hess, A.E. Mark and M.A. Robb<br>
+<i>converting light into motion, elucidating the mechanism of a
+light-driven molecular motor</i></td></tr>
+
+
+<tr><td valign="top">2004</td><td valign="top"> G. Groenhof,
+M. Bouxin-Cademartory, B. Hess, S.P. de Visser, H.J.C. Berendsen,
+M. Olivucci, A.E. Mark and M.A. Robb<br>
+<i>Photoactivation of the Photoactive Yellow Protein: Why photon
+ absorption triggers a trans-to-cis isomerization of the chromophore
+ in the protein</i><br> Journal of the American Chemical
+ Society, <b>126</b> (2004), 4228-4233<br>
+(<a HREF=http://www.facultyof1000.com/article/15053611>evaluated 3.0 by the faculty of 1000</a>)</td></tr>
+
+<tr><td valign="top">2002</td><td valign="top"> G. Groenhof,
+M.F. Lensink, H.J.C. Berendsen and A.E. Mark<br><i>Signal Transduction
+in the Photoactive Yellow Protein. II: Proton Transfer Initiates
+Conformational Changes</i><br> Proteins: Structure, Function, and
+Genetics, <b>48</b> (2002), 212-223<br>(<a HREF=http://www.facultyof1000.com/article/12112689>evaluated 3.0 by the faculty of 1000</a>)</td></tr>
+
+<tr><td valign="top">2002</td><td valign="top"> G. Groenhof,
+M.F. Lensink, J.G. Snijders, H.J.C. Berendsen and
+A.E. Mark<br><i>Signal Transduction in the Photoactive Yellow
+Protein. I: Photon Absorption and the Isomerization of the
+Chromophore</i><br> Proteins: Structure, Function, and
+Genetics, <b>48</b> (2002), 202-211<br>(<a HREF=http://www.facultyof1000.com/article/12112690>evaluated 3.2 by the faculty of 1000</a>)</td></tr>
+
+</table>
+
+<h1>Oral presentations</h1>
+<table border="0" width="99%" cellpadding="10">
+<tr><td valign="top">september 2004</td><td valign="top">invited
+speaker at the <a HREF="http://www.dddc.ac.cn/embo04/">EMBO course
+2004</a>:<br>"Protein simulations and drug design"<br> Shanghai Institute of
+Materia Medica<br> Shanghai, China<br>
+<i>Mixed Quantum-Classical simulations of biomolecular systems</i></td></tr>
+
+<tr><td valign="top">september 2004</td><td valign="top">invited speaker
+at the school of life sciences <br> University of Science and Technology of China<br>
+Hefei, China<br>
+<i>Photoactivation of the Photoactive Yellow Protein</i></td></tr>
+
+<tr><td valign="top"> august 2004</td><td valign="top">contributed
+talk at the AM^3 conference<br> Leicester, United Kingdom<br>
+<i>Mixed Quantum-Classical simulations</i></td></tr>
+
+<tr><td valign="top"> august 2004</td><td valign="top">invited speaker
+at the summerschool at <a
+HREF="http://www.iu-bremen.de/news/iubnews/01104/print.html">IUB</a>:<br>"advanced
+modeling of biological function"<br> International University of
+Bremen<br> Bremen, Germany<br>
+<i>Mixed Quantum-Classical simulations of biomolecular systems</i></td></tr>
+
+<tr><td valign="top">june 2004</td><td valign="top">invited speaker at
+the photoreceptor symposium<br> university of Amsterdam<br> Amsterdam,
+The Netherlands<br>
+<i>Photoactivation of the Photoactive Yellow Protein</i></td></tr>
+
+<tr><td valign="top">november 2003</td><td valign="top">invited
+speaker at the Max Planck Institute for Biophysical
+Chemistry<br>Goettingen, Germany<br>
+<i>Mixed Quantum-Classical simulations of biomolecular
+systems</i></td></tr>
+
+<tr><td valign="top">october 2003</td><td valign="top">invited speaker
+at the department of microbiology<br> university of Amsterdam<br>
+Amsterdam, The Netherlands<br>
+<i>Photoactivation of the Photoactive Yellow Protein</i></td></tr>
+
+<tr><td valign="top">august 2003</td><td valign="top">invited speaker
+at the Department of Biochemistry<br> University of Ghent<br> Ghent,
+Belgium</br>
+<i>Photoactivation of the Photoactive Yellow Protein</i></td></tr>
+
+<tr><td valign="top">may 2003</td><td valign="top">invited speaker at
+the biocenter<br> University of Oulu<br> Oulu, Finland</br>
+<i>Photoactivation of the Photoactive Yellow Protein</i></td></tr>
+
+<tr><td valign="top">december 2002</td><td valign="top">contributed
+talk at the NWO meeting "Proteins"<br> Lunteren, The Netherlands<br>
+<i>Photoactivation of the Photoactive Yellow Protein</i><br>
+(awarded 2nd prize for best oral presentation)</td></tr>
+
+<tr><td valign="top">march 2002</td><td valign="top">invited speaker
+at the department of theoretical biochemical physics<br> University of
+Nagoya<br> Nagoya, Japan<br>
+<i>Signal Transduction in the Photoactive Yellow Protein</i></td></tr>
+
+<tr><td valign="top">may 2001</td><td valign="top">invited speaker at
+the QM/MM workshop<br> University of Oulu<br> Oulu, Finland</br>
+<i>GROMACS/GAMESS-UK: a QM/MM hybrid</i></td></tr>
+</table>
+
+
+
+
+
+<h1>Referee for journals</h1>
+
+<ul>
+<li>
+Biophysical Journal<li>
+Journal of the Molecular Graphics and Modelling Society
+</li>
+</ul>
+
+
+<h1>Grants</h1>
+<ul>
+<li>
+Molecular Dynamics Beyond the Born-Oppenheimer Approximation -
+Ph.D. grant funded by the dutch science foundation (NWO)
+</li>
+</ul>
+<hr size="1"> 
+updated 12/04/05
+
+
+</body>
+</html>
+

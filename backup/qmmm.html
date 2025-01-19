@@ -1,0 +1,251 @@
+<html>
+<head>
+  <title>QM/MM implementation in Gromacs</title>
+</head>
+
+<h1><b><font size="8"> QM/MM implementation in Gromacs</font></b></h1>
+
+
+<a NAME="intro">
+<h1>Introduction</h1>
+
+
+
+<a HREF=http://www.gromacs.org>Gromacs</a> now provides an interface
+to the quantum chemistry packages GAMESS-UK, Gaussian0x, and
+mopac7. On this page you can find a short <a HREF="#over">overview</a>
+of the capabilities, <a HREF="#doc">documentation</a>, <a
+HREF="#ex">examples</a>, and the <a HREF="#code">code</a> itself. All
+of this is under development and this page is only intended for those
+who would like to try and test it. The page will be frequently updated
+with newer versions of the code as QM/MM is still under development.
+
+
+<a NAME="over">
+<h1>Overview of Gromacs'  QM/MM capabilities</h1>
+
+<ul>
+QM methods
+<ul> 
+<li>AM1
+<li>PM3
+<li>RHF
+<li>UHF
+<li>CASSCF
+<li>MP2
+<li>DFT
+</ul>
+
+QM basissets
+<ul> 
+<li>all
+</ul>
+
+Optimization <strong>!!!! not working properly, I will fix this soon !!!!</strong>!
+<ul> 
+<li>Minima (integrator=OPT)
+<li>Transtion states (integrator=TS) !!!! use LT instead !!!!
+</ul>
+
+Dynamics
+<ul>
+<li> ground state simulation
+<li> excited state simulation
+<li> Surface Hopping: switching from excited to ground state in a
+simulation
+</ul>
+
+QM-MM boundary interfaces
+<ul>
+<li>standard QM/MM
+<li>ONIOM
+<li>multi-layer ONIOM
+</ul>
+</ul>
+
+<a HREF="#intro">back to top</a>
+
+<a NAME="doc">
+<h1>Documentation</h1>
+
+<ul>
+A QM/MM how-to is included in the gromacs-qmmm tutorial. Soon, I will copy-paste
+those part into this document. Click <a HREF=EMBO2004/html/qmmmvacuum.html#qmmmhowto>here</a> to read it.
+
+</ul>
+
+<a HREF="#intro">back to top</a>
+<a NAME="ex">
+<h1>Examples</h1>
+
+<ul>Working on it, but if you need help for your system, <a href="mailto:ggroenh@gwdg.de">contact me</a>. For
+now there are two examples.
+<p>
+<ul>
+<li>excited state QM/MM MD simulation with <i>diabatic</i> Surface Hopping of Photoactive Yellow Protein
+(see <a HREF=qmmm/papers/groenhof04.pdf>JACS 126 (2004), 4228-4233</a>)
+<p>
+<a HREF=qmmm/examples/pyp.mdp>pyp.mdp</a> <br>
+<a HREF=qmmm/examples/pyp.ndx>pyp.ndx</a> <br>
+<a HREF=qmmm/examples/pyp.top>pyp.top</a> <br>
+<a HREF=qmmm/examples/pyp.gro>pyp.gro</a> <br>
+<a HREF=qmmm/examples/input.chk.Z>input.chk.Z</a> (checkpoint file which provides the MO coefficents for the CASSCF wavefuntion)
+
+<li>optimization of the transition state for the Diels-Alder reaction
+in a Diels-Alderase protein (part of the EMBO course on protein modeling in Shanhai, China,  september 2004)
+<p>
+<a HREF=EMBO2004/html/tutorial.html>Diels-Alderase QM/MM tutorial</a><br>
+<li>Splitting of a thymine dimer lesion in DNA (part of the advanced simulaion workshop in Sao Carlos, Brazil, november 2008)
+<p>
+<a HREF=SaoCarlos2008/html/tutorial.html>Thymine dimer splitting</a>
+</ul>
+</ul>
+<a HREF="#intro">back to top</a>
+<a NAME="code">
+<h1>Source code</h1>
+
+
+<ul>
+
+<li>Gromacs<p>
+
+From version 3.3 onwards, the default gromacs distributions support QM/MM. Visit our <a
+HREF=www.gromacs.org> gromacs</a> webpage to obtain one. Below are two older
+versions, which we no longer provide support for. I therefore strongly advise
+you to use an official distribution version instead.
+<p>
+<a HREF=qmmm/gmx/gmx3.2/gmx.tar.gz>qmx.tar.gz</a> (gromacs v3.2 with QM/MM)<br><p>
+
+<a HREF=qmmm/gmx/gmx3.3/gmx.tar.gz>qmx.tar.gz
+</a> (gromacs v3.3 (CVS) with QM/MM)<br><p>
+
+<li>To compile gromacs you will need also the source codes of mopac7,
+gaussian0x and/or GAMESS-UK. As these codes are owned by their
+respective copyright holders, I cannot distribute them myself. You
+have to obtain them yourself therefore. Here is where you can find them:
+<p>
+<a HREF=http://www.gaussian.com>Gaussian</a><br>
+<a HREF=http://www.dl.ac.uk/CFS/cfs.html>GAMESS-UK</a><br>
+<a HREF=http://sourceforge.net/projects/mopac7/>MOPAC7</a> or <a HREF=qmmm/mopac/SGI/mopac7.tar.gz>mopac7.tar.gz</a><br>
+<p>
+
+<li>In addition, you need the following bits of code to link mdrun to
+these QM packages<br>
+<br>
+Mopac7
+<ul>
+<li><a HREF=qmmm/mopac/gmxmop.f>gmxmop.f</a> <li><a
+HREF=qmmm/mopac/dcart.f>dcart.f</a>, replace the default dcart.f by
+this one.  <li><a HREF=qmmm/mopac/libmopac.a.gz>libmopac.a.gz</a>
+(precompiled lib for linux) </ul><br> Compile all mopac files (f77 -O2
+-c *.f), except mopac.f, moldat.f and deriv.f (thes ones are to be
+replaced by gmxmop.f), and collect the objects (*.o) into a library
+(ar rcv libmopac.a *.o;ranlib libmopac.a). Or if you are using linux,
+simply download libmopac.a instead.<br><br>Note, for SGI, download
+this <a HREF=qmmm/mopac/SGI/gmxmop.f>gmxmop.f</a> instead. I don't know
+why, but the way common blocks are handled seems a bit different on
+this architecture.
+<p>
+Then, configure gromacs with
+<ul>
+<li>CPPFLAGS=-DUSE_MOPAC
+<li>LIBS=-lmopac
+<li>LDFLAGS=-L(location of libmopac.a)
+</ul>
+or modify the LIBS line in the Makefile (the quick and dirty way)
+<ul>
+<li>LIBS= ... -lmopac -lm ...
+</ul>
+<br>
+GAMESS-UK
+
+<ul>
+<li><a HREF=qmmm/GAMESS-UK/ver_c.f>ver_c.f</a>
+<li><a HREF=qmmm/GAMESS-UK/gamess.m>gamess.m</a>
+<li><a HREF=qmmm/GAMESS-UK/gmx.m>gmx.m</a>
+<li><a HREF=qmmm/GAMESS-UK/parallel.m>parallel.m</a> (if you want to run in parallel)
+<li><a HREF=qmmm/GAMESS-UK/Makefile>Makefile</a>
+</ul><br>
+
+Add the files to the GAMESS-UK/m4 subdir, update the Makefile to match
+the configuration on your computer system and compile the
+code. <br><br>
+
+Then, configure gromacs with 
+<ul>
+<li>CPPFLAGS=-DUSE_GAMESS
+<li>LDFLAGS=-L(location of libgamess.a)
+<li>LIBS='-lgamess -lg2c -lm'
+</ul>
+or modify the LIBS line in the Makefile
+<ul>
+<li>LIBS= ... -lgamess -lg2c -lm ...
+</ul>
+<br>
+
+Gaussian03
+<p>
+To run gromacs with gaussian a few modifications are required in links
+301, 510, 701 and 9999. Because we cannot distribute source code which
+is part of gaussian, we have made available a set of instructions to
+build these yourself, which is allowed as long as you have a legal
+version of the gaussian source code.
+<p>
+Gaussian provides a convenient way of building and using modified
+links. You should make a new subdirectory, say modlinks, in which you
+make directories for each of the links you want to modify. Then
+extract from the gaussian source tree, those functions that need
+modification into these directories and build an alternative
+executable by linking you objects with the original gaussian
+objects. With the %subst lxxx /home/user/modlinks/lxxx in the input
+file, gaussian will use your modified lxxx.exe instead of the
+original.
+<p>
+Gromacs uses gradients on the point charges, and thus modifications
+are required to l701.exe. Also to make these gradients available for
+gromacs, l9999, which controls the output of gaussian are
+essential. In addition a small modification should be made to l301, to
+exclude point charge - point charge interactions. Finally, link 510
+that performs the MCSCF has to be altered if you are interested in
+excited state dynamics.
+<p>
+After creating a subdirectory for these links in the modlinks
+directory, i.e.
+<p>
+~/modlinks/l301<br>
+~/modlinks/l510<br>
+~/modlinks/l701<br>
+~/modlinks/l9999<br>
+<p>
+the modified executables have to be built. Therefore, a makefile is
+required in each lxxx subdirectory. See for example
+the <a HREF="./l301.make">l301.make</a> make file.
+<p>
+With the gaussian utility gau-fsplit, you can extract the subroutines
+that have to be changed, e.g.
+<p>
+gau-fsplit -e d1e $GAUSS_DIR/l701.F
+<p>
+To find the fortran source file that contains the function you need,
+you can use the grep command:
+<p>
+grep -i d1e $GAUSS_DIR/*.F
+<p>
+An overview of which functions have to be modified and how can be be
+found here: <a HREF="./roadmap.pdf">roadmap.pdf</a>. After the
+modified links have been created, and gromacs has been configured
+with --with-qmmm-gaussian, the $DEVEL_DIR environment has to be set to
+the path of the modlinks subdir. Gromacs is now ready for doing QM/MM
+with gaussian.
+ 
+
+
+<br>
+<br>
+</ul>
+<a HREF="#intro">back to top</a>
+<hr size="1"> 
+updated 09/01/07
+
+</body>
+</html>

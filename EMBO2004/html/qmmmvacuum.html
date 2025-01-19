@@ -1,0 +1,491 @@
+<html>
+<head>
+  <title>QM/MM tutorial</title>
+</head>
+ <body bgcolor="#bbdddd" text="#000088" link="#880000" vlink="#440000" alink="#ffffff">
+
+<h1><font face="Arial"><b><font face="Comic Sans MS,Arial" size="6"> QM/MM tutorial</font></b></font></h1>
+
+ 
+<hr size="1"> <p> 
+QM/MM calculations on a Diels-Alder antibody catalyst.
+<p>
+<hr size="1"> 
+
+
+<a NAME="top">
+<h1>II. Optimization of product, reactant and transition state
+geometries in <i>vacuo</i>, using Linear Transit in gromacs</h1>
+<p>
+<a NAME="intro">
+<strong>Introduction</strong>
+<p>
+
+With a good guess of what the transition state should look like, it
+was rather straightforward to find the transition state geometry. We
+will now use the more systematic Linear Transit approach to do the
+same.
+
+In the Linear Transit a coordinate is choosen along which the
+reactants are transformed into product. This so called reaction
+coordinate is varied linearly while all other degrees of freedom are
+minimized. Choosing such reaction coordinate requires some intuition
+and understanding of the process studied, but is in general easier to
+chose than a reasonable guess geometry. The concept of the reaction
+coordinate is best explained by an example. In case of a Diels-Alder
+cyclo-addition, a good reaction coordinate would be the distance
+between the two atom pairs that are forming the two new bonds upon
+reaction (figure 3).
+<a NAME="fig3">
+<blockquote>
+<img SRC=./react_coord.gif ALT="" >
+</blockquote>
+
+<blockquote>
+<i><strong>Figure 3.</strong></i> Suitable Reaction Coordinate for a
+Diels-Alder reaction. The distance (d) between the centers of the atom
+pairs involved in the cyclo-<br>addition is restrained or constrained,
+while all other degrees of freedom are minimized.
+</blockquote>
+
+Once the reaction coordinate is choosen, we slowly progress along that
+coordinate, while minimizing all other degrees of freedom. In
+practice, the reaction coordinate is constrained or restrained at a
+number of distances. Afterwards, the potential energy is plotted as a
+function the reaction coordinate. The maximum of this curve is the
+transition state and the minima are the reactant and product
+states. 
+<p>
+Here we will use the gromacs QM/MM features to perform a Linear
+Transit calculation of the Diels-Alder cyclo-addition reaction (<a
+HREF=introduction.html#fig1>figure 1</a>). The -R group, which was
+missing in the x-ray model and ignored in the previous part of the
+tutorial, will now be taken into account. Because this group is
+unlikely to have a large effect on the reaction, we will describe it
+at the MM level in our model.
+<p>
+<a NAME="qmmm">
+<strong>QM/MM subdivision</strong>
+<p>
+Figure 4 shows how we split up our system in a QM and MM part. The QM
+part consists of the same atoms we were using in the previous vacuum
+calculations and is described at the <i>semi-empirical</i> PM3 level
+of theory. The remainder of the system, consisting of the tail part
+(-R, <a HREF=introduction.html#fig1>figure 1</a>) is modeled with the GROMOS96 forcefield.
+<a NAME="fig4"> 
+<blockquote>
+<img src=qmmm_vac_small.gif alt="" >
+</blockquote>
+
+<blockquote>
+<i><strong>Figure 4.</strong></i> Division of the system in a QM
+subsystem and an MM subsystem. The QM subsystem is described at the
+<i>semi-empirical</i> QM level,<br>while the remainder of the system,
+consisting of the reactants-aliphatic tail is modeled with the
+GROMOS96 forcefield.
+</blockquote>
+
+<p>
+The QM/MM division splits the systems along a chemical
+bond. Therefore, we need to cap the QM subsystem with a so-called link
+atom (la, figure 4). This link atom is present as a hydrogen atom in
+the QM calculation step. It is not physically present in the MM
+subsystem, but the forces on it, that are computed in the QM step, are
+distributed over the two atoms of the bond. The bondlength itself is
+constrained during the computations.
+<p>
+<a NAME="qmmmhowto">
+To make use of the QM/MM functionality in Gromacs, we have to
+<ul>
+<li>
+<a HREF="#topol"> introduce link atoms at the QM/MM boundary, if
+needed</a>;
+<li>
+<a HREF="#ndx"> specify which atoms are to be treated at a QM
+level</a>;
+<li>
+<a HREF="#mdp">specify the QM level, basisset, type of QM/MM interface
+and so on</a>.
+</ul>
+
+<p>
+We also need to know how to do a Linear-Transit in Gromacs:
+<ul>
+<li>
+<a HREF="#LT1"> setting up a Linear-Transit calculation</a>;
+<li>
+<a HREF="#LT2"> performing a Linear-Transit calculation</a>.
+</ul>
+<p>
+<a NAME="topol">
+<strong>adding link atoms</strong>
+<p>
+At the bond that connects the QM and MM subsystems we introduce a link
+atom. In Gromacs we make use of a special atomtype, called LA. This
+atomtype is treated as a hydrogen atom in the QM calculation, and as a
+dummy atom in the forcefield calculation. The link atoms, if any, are
+part of the system, but have no interaction with any other atom,
+except that the QM force working on it is distributed over the two
+atoms of the bond. In the topology the link atom (LA), therefore, is
+defined as a dummy atom:
+<blockquote>
+<font face="courier" color=black>
+[ dummies2 ] <br> LA QMatom MMatom 1 0.65<br>
+</font>
+</blockquote>
+Note, a link atom has no mass.
+<br>
+Furthermore, the bond itself is replaced by a constraint:
+<blockquote>
+<font face="courier" color=black>
+[ constraints ] <br> QMatom MMatom 2 0.153<br>
+</font>
+</blockquote>
+Note that, because in our system the QM/MM bond is a carbon-carbon
+bond (0.153 nm), we use a constraint length of 0.153 nm, and dummy
+position of 0.65. The latter is the ratio between the ideal C-H bondlength
+and the ideal C-C bond length. With this ratio, the link atom is always 0.1 nm
+away from the
+QMatom, consistent with the carbon-hydrogen bondlength. If
+the QM and MM subsystems are connected by a different kind of bond, a
+different constraint and a different dummy position, appropriate for
+that bond type, are required. The QM/MM topology file for the
+reactants shown in figure 4 is found here: <a
+HREF=../vacuum/topol_A.itp>topol_A.itp</a>.
+<p>
+<a NAME="ndx">
+<strong>specifying the QM atoms</strong>
+<p>
+Once we have decided which atoms should be treated by a QM method, we
+add these atoms, including the link atoms, if any, to the index
+file. We can either use the make_ndx program, or hack the atoms into
+the index.ndx file ourselves. The index file we will use in this
+tutorial is found here: <a HREF=../vacuum/index.ndx>index.ndx</a>. It
+is possible to constrain the bonds in the QM subsystem along. It is
+also possible not to constrain them, while the bonds in the MM
+subsystem are. This is essential for instance if the QM atoms are
+supposed to undergo bond-breaking/formation reactions. In this case,
+Gromacs' bondtype 5 is used for the bonds in the QM subsystem:
+<blockquote>
+<font face="courier" color=black>
+[ bonds ]   <br>
+QMatom1 QMatom2 5<br>
+QMatom2 QMatom3 5<br>
+</font>
+</blockquote>
+<p>
+<a NAME="mdp">
+<strong>specifying the QM/MM simulation parameters</strong>
+<p>
+The last thing we need to do to setup gromacs for performing QM/MM
+calculations is to specify what level of QM theory gromacs has to use
+for the QM subsystem, what QM/MM interface to use, what multiplicity
+the QM subsystem has, and so on. All these things are defined in the
+mdp file. The following option lines need to be included for a QM/MM
+run:
+<blockquote>
+<font face="courier" color=black >
+QMMM                     = yes<br>
+QMMM-grps                = QMatoms<br>
+QMmethod                 = RHF<br>
+QMbasis                  = 3-21G*<br>
+QMMMscheme               = ONIOM<br>
+QMcharge                 = 0<br>
+QMmult                   = 1<br>
+</font>
+</blockquote>
+Note that the default options are shown here. The actual options
+depend on the system. The mdp file we will use for the QM/MM
+computations in <i>vacuo</i> is located here: <a
+HREF=../vacuum/LT.mdp>LT.mdp</a>. In case one choses as the
+QMmethod a <i>semi-empirical</i> method, such as AM1 or PM3, the
+QMbasis is ignored.
+<p>
+<a NAME="LT1">
+<strong>setting up a Linear-Transit calculation</strong>
+<p>
+In this paragraph we describe how to do linear transits with
+gromacs. Note that Linear Transist calculations have nothing to do
+with QM/MM and can be done with an MM only description as well. We
+will refer to the reaction coordinate defined in figure 3.
+<p>
+We want to constrain the distance between the centers of the atompairs
+involved in the reaction and minimize all other degrees of freedom in
+the system. The way we can impose our constraint in gromacs, is to put
+a dummy atom (atomtype XX), with no interaction whatsoever with any
+other atom of the system, exactly in the middle of the atompairs
+(figure 3) and constrain the dummy-dummy distance.
+<blockquote>
+<font face="courier" color=black>
+[ dummies2 ]   <br>
+dummy1 atom1 atom2 1 0.5 <br>
+dummy2 atom3 atom4 1 0.5 <br>
+<br>
+[ constraints ]   <br>
+dummy1 dummy2 2 1.6<br>
+</font>
+</blockquote>
+where 1.6 is the current constraint length.
+
+<p>
+
+The dummy is constructed every step of the simulation/optimization, so
+that it is always exaclty in the middle between the atompair. Note, in
+the current version of gromacs, constraints between dummies are not
+allowed yet, so we will use a little trick here. The trick is
+explained <a HREF=trick.html>here</a>. For now, it is not important to
+know the details of this trick. Furthermore, already in the next
+release of gromacs it will be possible to apply the dummy-dummy
+constraints we need here.
+<p>
+
+<a NAME="LT2">
+<strong>performing a Linear-Transit calculation</strong>
+<p>
+Now that we know how to constrain the reaction coordinate, we are
+going to perform minimizations at different constraint lengths. We
+create different subdirectories, one for every Linear-Transit
+point. We perform the minimizations in these subdirectories and use
+the result as input for the minimization in the next
+subdirectory. After all minimizations along the reaction coordinate
+have been done, we collect the energies from the subdirectories and
+plot them as a function of the reaction coordinate.
+
+<p>
+The procedure is straightforward, but tedious. Therefore, we will make
+use of scripts. With the first script we create the subdirectories and
+place the topology files with different constraint legths in them. The
+second script then goes into the subdirs one by one, runs grompp en
+mdrun. Finally a third script runs g_energy, which retrieves the
+energies from the outputfile ener.edr and collects the energies as a
+function of the constraint lenght. The scripts are available for
+download:
+<a NAME="scr">
+<ul>
+<li><a HREF=../vacuum/create_tops.scr>create_tops.scr</a> 
+
+<li><a HREF=../vacuum/run.scr>run.scr</a>
+
+ <li><a HREF=../vacuum/get_ener.scr>get_ener.scr</a>
+</ul>
+The usage of all three scripts is: <font face="courier"
+color=black>scriptname.scr dist1 dist2 steps</font> where dist1 and
+dist2 are the first and last points along the reaction coordinate
+respectively and steps is the number of points we want to have on the
+reaction coordinate.  
+<p>
+Using these scripts we are going to perform a Linear Transit
+calculation on the Diels-Alder reaction in <a
+HREF=introduction.html#fig1>figure 1<a> in <i>vacuo</i>, along the
+reaction coordinate shown in <a HREF="#fig3">figure 3</a>.
+<p>
+<a HREF="#top">back to top</a>
+<p>
+<hr size="1">
+<p>
+
+<a NAME="LT">
+<h1>Finding product, reactant and transition state geometries in
+<i>vacuo</i>, using Linear Transit</h1>
+
+<ul>
+<li TYPE=1>
+The starting structure for this calculation is the transition-state
+analogue form the x-ray model. We modify this structure first, such
+that it becomes a good model structure for the reaction. In the
+previous step we learned how to use molden. We will use it again to
+change the atomnames, saturate the complex with hydrogen atoms, and
+add the aliphatic tail. We can skip the first three steps here, as a
+prepared <a HREF=../vacuum/confin.gro>coordinate</a>, <a
+HREF=../vacuum/topol.top>topology</a> and <a
+HREF=../vacuum/index.ndx>index</a> file are available
+already. Preparing these files is not difficult at all, but can
+consume quite some time the first time.
+<p>
+<a NAME="tail">
+<ul>
+<li>import the pdb file of the analogue we have created in step one of
+the previous part
+<p> 
+<font color=red>localhost:~>molden -P analogue.pdb</font>
+<p>
+<li>modify the atomnames in the Z-matrix editor.
+<p>
+<li>use the "add line" button to add the hydrogens and the tail
+part. Note, the tail atoms, except the atom, next to the nitrogen atom
+should not have Hydrogen atoms, as this part is going to be described
+with the Gromos96 which employs so-called united-atoms, <i>i.e.</i>,
+the hydrogens are summed into the carbon atoms. The result should look
+like:
+
+<blockquote>
+<img SRC=../vacuum/moldenwindow_small.jpg ALT="">
+<img SRC=../vacuum/moldenzmatrix_small.jpg ALT="">
+</blockquote>
+<p>
+<li>save the molecule as confin.crd in cartesian xyz format, using the
+"Cartesian" button.
+<p>
+<li>open the confin.crd in an text editor, such as emacs and re-write
+the confin.crd such that each atom has a unique name. See for example
+<a HREF=../vacuum/confin.gro>confin.gro</a>.
+
+</ul>
+<p>
+<li TYPE=1>We also need to write a QM/MM topology file for this
+compound. See for example <a
+HREF=../vacuum/topol_A.itp>topol_A.itp</a>. Have a look at this file
+befroe we proceed. For the linear transit we will need a new topology
+with a different constraint distance for each point of the Linear
+transit. In our case the scripts mentioned above will take care of
+this, which is why we can skip this part.
+<p>
+<li TYPE=1>Furthermore we need an index file, with entries for the
+atoms that are supposed to be part of the MM and QM subsystems. We can
+use make_ndx for that, but we will skip this part as well, and use the
+prepared index file instead. <a HREF=../vacuum/index.ndx>index</a>
+<p>
+<li TYPE=1>Finally, we create an mdp file with the options for the
+QM/MM linear transit calculation. We need to specify that we want to
+energy minimize, how we want to minimize, that we want to do QM/MM,
+what QM method we want to use. The mdp file we are going to use is <a
+HREF=../vacuum/LT.mdp>LT.mdp</a>.
+<p>
+<li TYPE=1> With the input files and the scripts at hand, we can now
+perfom the actual linear transit calculation. We will let the reaction
+coordinate constraint vary between 0.12 and 0.5 nm in 200 steps.
+<p>
+<ul>
+<li> create a new subdirectory for the Linear Transit in <i>vacuo</i>
+<p>
+<font color=red>localhost:~>mkdir LTvacuo</font>
+<p>
+<li>download the <a HREF="#scr">scripts</a>, <a
+HREF=../vacuum/confin.gro>, <a HREF=../vacuum/topol.top>topology</a>, <a
+HREF=../vacuum/index.ndx>index</a> and <a
+HREF=../vacuum/LT.mdp>LT.mdp</a> into that directory
+<p>
+<li>execute the create_tops.scr scripts to create 201 subdirectories
+(called step_0, ..., step_200) and create a topol_A.itp with different
+constraints lengths in the range 0.12 to 0.5 nm.<p>
+<font color=red>localhost:~>./create_tops.scr 0.12 0.5 200</font>
+<p>
+<li>execute the run.scr scripts to run the minimizations in the
+different subdirectories. To speed up the convergence, the script
+takes the output coordinates of the previous Linear Transit point as
+input in the current minimization<p> <font
+color=red>localhost:~>./run.scr 0.12 0.5 200</font>
+<p>
+This will take a while, depending on the speed of your computer
+system.
+<p>
+<li>execute the get_ener.scr script to retrieve the energies from the
+individual linear transit points. Redirect the output to a file, let's
+call it eqmmm.xvg.<p> <font color=red>localhost:~>./get_ener.scr 0.12 0.5 200 >
+eqmmm.xvg</font>
+
+</ul>
+<p>
+<li TYPE=1>Let's have a look at the results
+<p>
+<ul>
+<li>Import eqmmm.xvg in xmgr to see the energy as a function of the
+reaction coordinate.<p><font color=red>localhost:~>xmgr eqmmm.xvg</font>
+
+<blockquote>
+<img SRC=../vacuum/eqmmm.jpg ALT=""> 
+</blockquote>
+
+The maximum is at 0.2093 nm (-149.924 kJ/mol). This corresponds to
+point 47. Let's have a look at that structure. We simply go into the
+directory step_47 and use editconf to convert the confout.gro into
+confout.pdb <p><font color=red>localhost:~>editconf -f confout.gro -o confout.pdb</font>
+<p>
+We then use rasmol to visualize the structure:
+<p><font color=red>localhost:~>rasmol confout.pdb</font>
+
+<blockquote>
+<img SRC=../vacuum/rasmolTS.jpg ALT=""> 
+</blockquote>
+<p>
+It looks verly much like the one we optimized in the previous
+step. You can check if it is a TS by perfoming a frequencies
+caclulaiton on this structure, using gaussian, just like we did <a
+HREF="qmvacuum.html#freq">before</a>.
+
+<p> The minima are at 0.4468 nm (-342.826kJ/mol) and 0.1485 (-388.276
+kJ/mol) and correspond to the reactant and product state respectively,
+and are shown here, along with the transition state again.
+
+<blockquote>
+<img SRC=../vacuum/vacuumLT_small.jpg ALT="">
+</blockquote>
+
+<blockquote>
+<i><strong>Figure 5.</strong></i> Reactant (a), Transition State (b),
+and Product (c) geometries in <i>vacuo</i>, found with the Linear
+Transit method. The<br>energies of these structures are listed in table
+2.
+</blockquote>
+
+<p>
+</ul>
+</ul>
+<p>
+<a HREF="#top">back to top</a>
+
+<p><hr size="1"> <p> 
+
+<a NAME="conc">
+<h1>Conclusions</h1>
+
+<p>
+We have now found the geometries and energies of the transition state,
+the reactant state and the prodcut state of the Diels-Alder
+cycloaddition in <i>vacuo</i>. Table 2 lists the potential energies of
+these geomtries. A direct comparison with the energies and energy
+differences found using the optimization routines of gaussian98 (<a
+HREF="qmvacuum.html#tab1">tabel 1</a>) in not valid, because in the
+current computations the aliphatic tail (-R, <a
+HREF="introduction.html#fig1">figure 1</a>) was taken into account
+explicitly, while it was ignored in the previous computations.
+<p>
+
+<a NAME="tab2">
+<blockquote>
+<i><strong>Table 2.</strong></i> Energies of the reactant,<br>
+transition state and product geom-<br>etries in <i>vacuo</i> at the
+QM/MM<br>PM3/GROMOS level. The last<br>column lists the energy
+differences<br>with respect to the reactant state.
+<p>
+<table border="1">
+<tr>
+<td></td><td>E (kJ/mol)</td><td>&#916E (kJ/mol)</td></tr>
+<td>Reactant</td><td>-342.826</td><td>0.0</td></tr>
+<td>Trans. St.</td><td>-149.924</td><td>192.902</td></tr>
+<td>Product</td><td>-388.276</td><td>-45.45</td></tr>
+</table>
+
+</blockquote>
+
+
+<p>
+<table>
+<tr>
+<td>Next:</td><td><a HREF="qmmmwater.html#top">III. Optimization of
+the product, reactant and transition state geometries in water, using
+Linear Transit in gromacs</a></td></tr> <td>Previous:</td><td><a
+HREF="qmvacuum.html"> I. Optimization of the product, reactant and
+transition state geometries in <i>vacuo</i>, using a quantum chemistry
+software package</a></td></tr>
+</table>
+
+<p>
+<a HREF="#top">back to top</a>
+<p>
+<hr size="1"><p> updated 28/07/04 
+
+
+</body>
+</html>
+

@@ -1,0 +1,153 @@
+<html>
+<head>
+  <title>QM/MM tutorial</title>
+</head>
+ <body bgcolor="#bbdddd" text="#000088" link="#880000" vlink="#440000" alink="#f
+fffff">
+
+<h1><font face="Arial"><b><font face="Comic Sans MS,Arial" size="6"> QM/MM tutorial</font></b></font></h1>
+
+ 
+<hr size="1"> <p> 
+QM/MM calculations on thymine dimer repair.
+<p>
+<hr size="1"> 
+
+
+<a NAME="top">
+<h1>I. Building a model of a solvated
+double stranded DNA molecule with a dimer lesion</h1>
+<p>
+<a NAME="intro">
+<strong>DNA building</strong>
+<p>
+<a HREF=http://casegroup.rutgers.edu/Biomer/index.html>B</a> (formely
+know as Biomer) is a Java-based, on-line biomolecular modeling
+package. It is useful for generating initial structures of biopolymers
+and small organic molecules. We will use
+<a HREF=http://casegroup.rutgers.edu/Biomer/index.html>B</a> to create
+double-stranded DNA oligomer. You are free to choose any sequence, as
+long as there is at least one TT repeat on one of the strands. The
+example files that we provide in this tutorial are based on a A20T20
+oligomer.
+<p>
+Please consult the
+<a HREF=http://casegroup.rutgers.edu/Biomer/index.html>B</a> manual
+and faq page for help on the model building. Save your DNA molecule in
+pdb format. The pdb file of the A20T20 oligomer can be found
+<a href=../files/Bmodel.pdb>here</a>.
+<p>
+
+<strong>Topology Building</strong>
+<p>
+To model the interactions we make use of the Amber99 forcefield. The
+Amber port for gromacs can be downloaded from
+<a href=http://chemistry.csulb.edu/ffamber/>Eric Sorin's webpage</a>. 
+<p>
+To allow the pdb2gmx tool to recognize the thymine dimer, we need to
+modify the ffamber99.rtp residue database. We introduce two new
+thymine residues dtA and dtB, and define additional interbase bonds
+between the C5 atoms and the C6 atoms. Here is what your modified
+<a href=../files/ffamber99.rtp>ffamber99.rtp</a> should look like.
+<p>
+With the pdb2gmx command we create the topology
+(<a href=../files/topol.top>topol.top</a>) and the configuration
+(<a href=../files/conf.gro>conf.gro)</a>:
+<p>
+<font color=red>localhost:~>pdb2gmx -ignh -f Bmodel.pdb</font>
+<p>
+The -ignh flag ignores hydrogenatoms in the input file, and forces
+pdb2gmx to construct the hydrogens based on the
+<a href=../files/ffamber99.hdb>ffamber99.hdb</a> database.
+<p>
+<h>
+<strong>Structure Preparation</strong>
+<p>
+ We first perform a minimization in vacuum, using the steepest descent
+algorithm.  Check <a href=../files/steep.mdp>steep.mdp</a> to
+familiarize yourself with the minimization protocol that we follow.
+<p>
+We perform the minimization by executing grompp and then mdrun:
+<p> 
+<font color=red>localhost:~>grompp -f steep.mdp </font>
+<p>
+<font color=red>localhost:~>mdrun -v -c minimized.pdb</font>
+<p>
+After minimization the DNA structure should looks like
+<a href=../files/minimized.pdb>this</a>.
+<p>
+The next step is to add water and neutralize the system. We use the
+gromacs tools editconf, genbox, and genion.
+<p>
+We first place the minimized structure in the center of a rectangular
+box:
+<p>
+<font color=red>localhost:~>editconf -c -d 1.6 -f minimized.pdb -o boxed.pdb</font>
+<p>
+Then, we add water, for which we use the tip4p model
+<p>
+<font color=red>localhost:~>genbox -cs tip4p.gro -cp boxed.pdb -p topol -o solved.pdb</font>
+<p>
+Finally, we neutralize the overall negative charge of -38 by adding 38
+sodium ions. We first need to create a tpr file, for which we use
+<a href=../files/neutralize.mdp>neutralize.mdp</a>:
+<p>
+<font color=red>localhost:~>grompp -f neutralize.mdp -c solved.pdb -p
+topol</font>
+<p>
+With the topol.tpr file, we can now use genion to place the 38
+counter-ions at random positions in the box:
+<p>
+<font color=red>localhost:~>genion -np 38 -pname Na -o neutral.pdb
+-random</font>
+<p>
+We now have to modify the topology by adding 38 sodium ions (NA) and
+removing 38 tip4p water molecules manually. The final topology file
+can be found <a href=../files/neutral.top>here</a>. In what follows we
+also need an <a href=../files/neutral.ndx>index</a> file that contain
+the atomnumbers of the DNA, water and ions.
+<p>
+<strong>Equilibration</strong>
+<p>
+Because of possible overlap between water molecules and DNA atoms, we
+have to minimize the model system. We use again the steepest descent
+algortihm to remove possible strain in the initial structure. The mdp
+file can be found <a href=../files/mini_sol.mdp>here</a>.
+<p>
+<font color=red>localhost:~>grompp -f mini_sol.mdp -p neutral.top -c
+neutral.pdb -n neutral.ndx</font>
+<p>
+<font color=red>localhost:~>mdrun -v -c <a href=../files/neutral_mini.pdb>neutral_mini.pdb</a>
+</font>
+<p>
+Then, we equilibrate the water and ions for 100 ps, using the
+parameter in <a href=../files/equi_sol.mdp>equi_sol.mdp</a>. The heavy
+atoms of the DNA are <a href=../files/posres.itp>restrained</a>  during the
+solvent equilibration.
+<p>
+<font color=red>localhost:~>grompp -f equi_sol.mdp -p neutral.top -c
+neutral_mini.pdb -n neutral.ndx</font>
+<p>
+<font color=red>localhost:~>mdrun -v -c neutral_sol_equi.pdb
+</font>
+<p>
+The result of the solvent equilibration on the A20T20 oligomer is
+available <a href=../files/neutral_sol_equi.pdb>here</a>.
+
+<p>
+<table>
+<tr>
+<td>Next:</td><td><a HREF="md.html#top">II. Equilibration of the DNA
+with gromacs</a></td></tr> <td>Previous:</td><td><a
+HREF="tutorial.html"> Introduction</a></td></tr>
+</table>
+
+<p>
+<a HREF="#top">back to top</a>
+<p>
+<hr size="1"><p> updated 28/10/08 
+
+
+</body>
+</html>
+

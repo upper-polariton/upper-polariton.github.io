@@ -1,0 +1,11 @@
+it de bindingen wordt een lijst i-j-k en i-j-k-l gemaakt (nu dus uniek,
+dus niet meer i-j-k-l en l-k-j-i)
+Dan zoekt gen_pad in de rtp of de hoek i-j-k voorkomt en zo ja, dan worden
+de parameters eraan gehangen (in s), net zo voor de dihedrals, alleen nu
+checkt ie ook of i-j-k-l meerdere keren in de rtp staat en dan wordt er
+dus een extra i-j-k-l dihedral toegevoegd aan de lijst.
+
+Vervolgens kijkt pdih2idih welke impropers er in de rtp staan en maakt
+daar een lijst van. Alle dihedrals die impropers zijn worden weggemikt
+en ook meerder diherdrals over 1 rotatable bond, tenzij -alldih aanstaat
+of er parameters aanhangen.

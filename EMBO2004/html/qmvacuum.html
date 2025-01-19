@@ -1,0 +1,413 @@
+<html>
+<head>
+  <title>QM/MM tutorial</title>
+</head>
+ <body bgcolor="#bbdddd" text="#000088" link="#880000" vlink="#440000" alink="#ffffff">
+
+<h1><font face="Arial"><b><font face="Comic Sans MS,Arial" size="6"> QM/MM tutorial</font></b></font></h1>
+
+ 
+<hr size="1"> <p> 
+QM/MM calculations on a Diels-Alder antibody catalyst.
+<p>
+<hr size="1"> 
+
+<a NAME="top">
+<h1>I. Optimization of the product, reactant and transition state
+geometries in <i>vacuo</i>, using a quantum chemistry software
+package</h1>
+<p>
+<strong>Introduction</strong>
+<p>
+A transition state for a chemical reaction can be found in many
+ways. With some intuition, a good guess can be made of what the
+transition state should look like and start the optimization from
+there. Another possibily is to define a coordinate which transforms
+the reactants into product and optimize the system while varying that
+coordinate. The latter approach is called a Linear Transit and will be
+discussed and used in the <a HREF="qmmmvacuum.html">next part</a> of
+this tutorial.
+<p>
+Here we will do a straight-forward <a HREF=#TS>search for the
+transition state</a>, using a good guess as a starting geometry. We
+will also try to optimize the <a HREF=#react>reactant</a> and <a
+HREF=#react>product</a> minima.
+
+<p>
+<hr size="1">
+<p>
+
+<a NAME="TS">
+<h1>Optimizing the transition state geometry in <i>vacuo</i>, starting
+with a good guess.</h1>
+
+<p>
+We will start by optimizing the transition state of the Diels-Alder
+reaction in <i>vacuo</i> at the <i>semi-empirical</i> PM3 level. This
+is easy since we already have the struture of the transition state
+analogue. We simply take the coordinates of that analogue from the
+x-ray structure (<a
+HREF=http://www.rcsb.org/pdb/cgi/explore.cgi?pid=128791089897524&pdbId=1C1E>1C1E.pdb</a>)
+and modify them a bit, such that we get the appropriate input
+coordinates for a <a HREF=http://www.gaussian.com>Gaussian98</a>
+transition-state optimization calculation. We will use the
+<i>semi-empirical</i> PM3 hamiltonian throughout this tutorial,
+because of its cost-efficiency. Note that in the x-ray structure the
+-R group of the analogue (<a HREF=introduction.html#fig1>Figure 1</a>)
+is not resolved. We ignore that group for the moment and focus on the
+system with -R = -CH3.
+
+<p>
+The following steps will lead us to the transition state geometry of
+the reaction in <i>vacuo</i>.
+<p>
+<ul>
+<li Type=1> We download <a
+HREF=http://www.rcsb.org/pdb/cgi/explore.cgi?pid=128791089897524&pdbId=1C1E>1C1E.pdb</a>
+x-ray structure from the pdbdatabase<br><br>
+
+<li Type=1> We use rasmol to isolate the transition state analogue (ENH)<br><br>
+<ul>
+<li> open 1C1E.pdb with rasmol<br>
+<font color=red>localhost:~>rasmol 1C1E.pdb</font>
+
+<blockquote>
+<img SRC=../rasmol/step1.jpg ALT="" >
+</blockquote>
+
+<li>select the TS analogue<br>RasMol>restrict ENH <br><br>
+
+<li>center the analogue <br>RasMol>center selected <br><br> 
+
+<li>zoom in on the analogue <br>RasMol>zoom 600<br><br>
+<blockquote>
+ <img SRC=../rasmol/step2.jpg ALT="" >
+</blockquote>
+<li> save the analogue in a seperate pbd-file<br>Rasmol>save
+analogue.pdb
+</ul>
+<p>
+<li Type=1> We use MOLDEN to create an gaussian inputfile for a
+transition state optimization from analogue.pdb <br><br>
+
+<ul>
+<li> open analogue.pdb with MOLDEN <br> <font color=red>localhost:~>molden -P
+analogue.pdb</font> (with the -P option MOLDEN expects pdb format as input)
+<blockquote>
+<img SRC=../molden/step1.jpg hsize=50>
+</blockquote>
+<li> click the stickcolor button in the Molden Control window to
+display the atoms in different colors
+<blockquote>
+<img SRC=../molden/step1b_small.jpg  ALT="">
+<img SRC=../molden/toolbox.jpg  ALT="">
+</blockquote>
+<li> click on the Zmat editor button to enter the Z-matrix
+editor
+<blockquote>
+<img SRC=../molden/zmatrixbox1.jpg ALT=""> 
+</blockquote>
+<li> click on the "select by cursor" button in the Zmat editor and
+select all atoms in the molecule visualiztion window by draging a box
+around them with the mouse pointer. Click the "apply selection" button
+to complete the selection. A Z-matrix represents the geometry in terms
+of distances, angles and torsions. For instance, atom 7, is a Nitrogen
+atom. The distance of this atom to atom 6 is A; the angle between this
+atom and atoms 6 and 3 is 110 degrees and the torsion angle between
+this atoms and atoms 6, 3 and 4 is 0.757 degrees.
+<blockquote>
+<img SRC=../molden/zmatrixbox2.jpg <br><br>
+</blockquote>
+<li> increase a bit the lengths of the two bonds that are supposed to
+be formed in the Diels-Alder reaction (C4-C5 and C2-C3).  Change the
+values of the bondlengths of C5-C4 and C3-C2 to, say 2 angstrom in the
+Z-matrix. Now the molecule resembes the actual Transition State a bit
+better already.  
+<blockquote>
+<img SRC=../molden/step2_small.jpg ALT=""> 
+<img SRC=../molden/zmatrix_step2_small.jpg ALT="">
+</blockquote>
+<li> next, change the atoms of the analogue to the atoms of the actual
+Transition State. Simple click on the atomname entries in the Z-matrix
+editor and change them to the appropriate atoms. Click on the "apply
+changes to current Z-mat" button for the changes to take
+effect.
+<blockquote>
+<img SRC=../molden/step2b_small.jpg  ALT="">
+<img SRC=../molden/zmatrix_step2b_small.jpg ALT="">
+</blockquote>
+<li> saturate the complex with hydrogens. Use the "add line" button to
+chose a hydrogen atoms and add them to the molecule by clicking on the
+unsaturated atoms first followed by clicking two more atoms to define
+an angle and a torsion respectively. The result should look like
+this:
+<blockquote>
+<img SRC=../molden/step4.jpg ALT="">
+</blockquote>
+<li> save the Z-matrix into a gaussian format. Clicking the "Gaussian"
+buttom at the bottom of the editor, type a name (<i>e.g.</i> TS.com)
+in the "File name ?" window and click the "write Z-matrix"
+button.
+<blockquote>
+<img SRC=../molden/zmatrix_step4.jpg ALT="">
+</blockquote>
+<li> quit molden by clicking the skull icon in the Molden Control
+window
+</ul>
+<p>
+
+<li Type=1> The next step is to make an input file for Gaussian. We
+use an ordinary text editor, such as emacs to complete the input file.
+<p>
+<ul>
+<li> open TS.com with emacs<br><font color=red>localhost:~>rasmol 1C1E.pdb</font><br><br>
+
+
+<li> add the gaussian keywords for a transition state optimization (#P
+PM3 OPT=(TS,noeigentest) TEST) and compete the input file. We use a
+so-called checkpoint file (%chk=TS, first line) to store all optimized
+parameters. after the modification we save it as TS.com. An example of
+what the input file should look like is <a HREF=TS.com>TS.com<a>.
+</ul>
+<p>
+<li Type=1> We run Gaussian to optimize the transition state.<br><br>
+<ul>
+<li>
+<font color=red>localhost:~>g98 TS.com</font><br><br>
+<li>
+copy the optimized cartesian coordinate section of the output file
+(TS.log) and paste them into emacs. Modify the file such that it can
+be read by Molden. The cartesian format for Molden is as follows:
+<p>
+<blockquote>
+line 1: number of atoms<br>
+line 2: blank<br>
+line 3: Atomsymbol x y z<br>
+line 4: Atomsymbol x y z<br>
+</blockquote>
+<p>
+and so on. The last line needs to be blank!<br>save the file as
+TS.xyz. An example of what this file should look like is <a
+HREF=TS.xyz>TS.xyz</a>
+
+<li> open the cartesian coordinate file with the optimizaed transition
+state structure with molden<br><font color=red>localhost:~>molden TS.xyz</font>
+
+<blockquote>
+<img SRC=../molden/step5.jpg ALT="">
+</blockquote>
+<p>
+Note: the Nitrogen atom is not completely SP2 hybridized (planar) in
+this geometry, but rather a slightly SP3 hybridized (pyramidal). This
+is a known shortcoming of the <i>semi-empirical</i> PM3
+hamiltonian. We ignore this artefact for now and continue with a
+slightly pyramidal N atom.
+</ul>
+<a NAME="freq">
+<li Type=1> We check if the structure obtained is a true transition
+state<br><br>
+<ul>
+<li>perform a freqency analysis on the optimized coordinates. The
+frequencies, or normal modes, are the eigenvalues of the
+HEssian. Remember that for a transition state, one and only one of
+these eigenvalues needs to be negative. The inputfile for that looks
+as follows:
+<p>
+<blockquote>
+<font face="courier" color=black>
+%chk=TS<br> #P PM3 FREQ geom=check TEST<br>
+<br>
+frequency calculation<br>
+<br>
+0 1<br>
+</font>
+</blockquote>
+ 
+<p>
+The coordinates are read form the checkpointfile (TS.chk, geom=check).
+Save the file as TS_freq.com
+
+<p>
+<li>
+<font color=red>localhost:~>g98 TS_freq.com</font><br><br>
+<li>
+check the output for imaginary freqencies. If there is one and only
+one, it means we found a transition state! From the visual inspection
+we learned it is the correct one, as the structure resembles what one
+would expect to be the transition state for the Diels-Alder
+cyclo-addition.
+</ul>
+</ul>
+<a HREF="#top">back to top</a> 
+
+<p><hr size="1"><p>
+
+<a NAME="react">
+<h1>Optimizing the reactant state geometry in <i>vacuo</i></h1>
+
+<p>
+Now that we have the transition state, we are going to optimize the
+reactant state geometry in <i>vacuo</i>. We start from the input file
+we created for optimizing the transition state. 
+
+<p>
+We simple increase a bit more the bond lengths of the bonds that are
+to be formed upon the cycloaddition reaction and start an geometry
+optimization.
+<ul>
+
+<li>open the TS.com input file in a text editor<br> <font color=red>localhost:~>emacs
+TS.com</font><br><br> 
+
+<li>increase the cc3 and cc5 bond lengths to 4 in the TS.com input
+file (<font face="courier" color=black>cc3 4.000000</font> and <font
+face="courier" color=black>cc5 4.000000</font>)<br><br>
+
+<li>change the <font face="courier"
+color=black>OPT=(TS,noeigentest)</font> command option to <font
+face="courier" color=black>OPT</font>, so that gaussian "knows" it is
+supposed to find a minimum with all negative eigenvalues of the
+hessian.<br><br>
+
+<li>save the
+file to REACT.com<br><br>
+
+<li><font color=red>localhost:~>g98 REACT.com</font><br><br>
+
+<li>
+copy the optimized cartesian coordinate section of the output file
+(REACT.log) and paste them into emacs. Modify the file such that it
+can be read by Molden. The cartesian format for Molden is as follows:
+<p>
+<blockquote>
+line 1: number of atoms<br> line 2: blank<br> line 3: Atomsymbol x y
+z<br> line 4: Atomsymbol x y z<br>
+</blockquote>
+and so on... Note that the last line needs to be blank! Save the file
+as REACT.xyz. An example is found here: <a
+HREF=REACT.xyz>REACT.xyz</a>.<br><br>
+
+<li> open the cartesian coordinate file with the optimized reactant
+minimum structure with molden to have a look at the reactants<br>
+(<font color=red>localhost:~>molden REACT.xyz</font>)
+<blockquote>
+<img SRC=../molden/step6.jpg ALT="">
+</blockquote>
+</ul>
+<a HREF="#top">back to top</a>
+<p><hr size="1"> <p> 
+<a NAME="prod">
+<h1>Optimizing the product state geometry in <i>vacuo</i></h1>
+
+<p>
+Again, we start from the Transition state optimization input. This
+time we want to have the product geometry in <i>vacuo</i>. We now
+decrease slightly the bond lengths of the bonds that are to be formed
+upon the cycloaddition reaction and start an geometry optimization.
+<ul>
+
+<li>open the TS.com input file in a text editor<br> <font color=red>localhost:~>emacs
+TS.com</font><br><br> 
+
+<li>decrease the cc3 and cc5 bond lengths to 1.5 in the TS.com input
+file (<font face="courier" color=black>cc3 1.500000</font> and <font
+face="courier" color=black>cc5 1.500000</font>)<br><br>
+
+<li>change the <font face="courier"
+color=black>OPT=(TS,noeigentest)</font> command option to <font
+face="courier" color=black>OPT</font>, so that gaussian "knows" it is
+supposed to find a minimum with all negative eigenvalues of the
+hessian.<br><br>
+
+<li>save the
+file to PROD.com<br><br>
+
+<li><font color=red>localhost:~>g98 PROD.com</font></font><br><br>
+
+<li>
+copy the optimized cartesian coordinate section of the output file
+(PROD.log) and paste them into emacs. Modify the file such that it can
+be read by Molden. The cartesian format for Molden is as follows:
+<p>
+<blockquote>
+line 1: number of atoms<br>
+line 2: blank<br>
+line 3: Atomsymbol x y z<br>
+line 4: Atomsymbol x y z<br>
+</blockquote>
+and so on... Note that the last line needs to be blank! Save the file
+as PROD.xyz. An example of what the file should look like is <a
+HREF=PROD.xyz>PROD.xyz</a><br><br>
+
+<li> open the cartesian coordinate file with the optimized reactant
+minimum structure with molden to have a look at the reactants<br>
+(<font color=red>localhost:~>molden PROD.xyz</font>)
+
+<blockquote>
+<img SRC=../molden/step7.jpg ALT=""> 
+</blockquote>
+</ul>
+
+<a HREF="#top">back to top</a>
+
+<p>
+<hr size="1"> <p> 
+<a NAME="conc">
+<h1>Conclusions</h1>
+
+<p>
+We have now optimized the geometries and energies of the transition
+state, the reactant state and the prodcut state of the Diels-Alder
+cycloaddition. The energies of these structures can be found by
+scanning the gaussian output files (.log) for lines that start with
+"Energy". The last one is the energy of the optimized structure. Note,
+the energies are reported in atomic units (au): 1 au = 2625.4999999
+kJ/mol. Table 1 lists the potential energies of the optimized
+geomtries.
+<p>
+
+<a NAME="tab1">
+<blockquote>
+<i><strong>Table 1.</strong></i> Energies of the optimized
+<br>structures in <i>vacuo</i> at the PM3 level<br>of theory. The last
+column lists the<br>energy differences with respect to<br>the reactant
+state.
+<p>
+
+
+<table border="1">
+<tr>
+<td></td><td>E(au)</td><td>E(kJ/mol)</td><td>&#916E(kJ/mol)</td></tr>
+<td>Reactant</td><td>-0.145</td><td>-380.70</td><td>0.0</td></tr>
+<td>Trans. St.</td><td>-0.068</td><td>-178.53</td><td>202.17</td></tr>
+<td>Product</td><td>-0.158</td><td>-414.83</td><td>-34.13</td></tr>
+</table>
+
+</blockquote>
+
+
+<p>
+The structures we optimized here at a <i>semi-empirical</i> level are
+a good starting point for optimizations at higher levels of theory. A
+good rule of the thumb in optimizing structures is to start with a
+very low level of theory an gradually increase the level of theory
+using the optimized geometry of the previous level (<i>i.e.</i>
+PM3, STO-3G, 3-21G, 3-21G*, ...., 6-31G*, ..., ...)
+
+<p>
+<table>
+<tr>
+<td>Next:</td><td><a HREF="qmmmvacuum.html#top">II. Optimization of
+the product, reactant and transition state geometries in <i>vacuo</i>,
+using Linear Transit in gromacs</a></td></tr> 
+<td>Previous:</td><td><a HREF="introduction.html"> Introduction</a></td></tr>
+</table>
+
+<p>
+<a HREF="#top">back to top</a>
+<p>
+<hr size="1"><p> updated 27/07/04 
+
+
+</body>
+</html>

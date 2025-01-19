@@ -1,0 +1,387 @@
+<html>
+<head>
+  <title>QM/MM tutorial</title>
+</head>
+ <body bgcolor="#bbdddd" text="#000088" link="#880000" vlink="#440000" alink="#ffffff">
+<font face="Arial"> </font>
+<h1><font face="Arial"><b><font face="Comic Sans MS,Arial" size="6"> QM/MM tutorial</font></b></font></h1>
+ 
+<p> </p>
+<hr size="1"> 
+<table cellspacing="0" cellpadding="0" border="0">
+  <tbody>
+    <tr>
+      <td valign="Top"><font face="Arial" size="4"> <a href="index.html">
+Main</a>&nbsp;|&nbsp;</font></td>
+ <td valign="Top"><font face="Arial" size="4"><a href="cv.html">Curriculum
+vitae</a> | <a href="publ.html">publications</a> | <a href="content.html">
+gromacs-sheets</a> | <a href="qmmm.html">qm/mm</a> | <a href="lnks.html">links</a></font></td>
+    </tr>
+  </tbody>
+</table>
+ 
+<hr size="1"> <p> 
+QM/MM calculations on a Diels-Alder antibody catalyst.
+<p>
+<hr size="1"> 
+
+<a NAME="top">
+
+
+
+<h1>II. Optimization of the product, reactant and transition state geometries in the fully solvated protein</h1>
+
+
+<p>
+<strong>Introduction</strong>
+<p>
+Having optimized a transition state
+structure in the vacuum, we will use that result as a starting point
+for the optimization of the transition state in the protein. We fit
+the vacuum transition state onto the transition state analogue in the
+pocket of the x-ray protein model. Remember that in the x-ray model,
+the -R group of the analogue was not resolved. We need to add the
+chain ourselves. The simplest way to do this is to add the chain to
+the transition state structure before fitting. Adding the tail can be
+done with Molden. After the fit, we minimize the tail keeping all
+other atoms in the system frozen.
+<p>
+We then place this modified protein model in a periodic box, fill that
+box with water and equilibrate the water. Subsequently, we add 6 Cl-
+ions to compensate the overall net charge of -6 on the protein and
+equilibrate again. The procedure of preparing the system for the QM/MM
+geometry optimization is straightforward, but
+time-consuming. Therefore, we skip fitting and equilibrating and use
+the result (<a HREF=../protein/confin.gro>confin.gro</a>) instead. An
+outline of the preparation is avalaible <a HREF=prepqmmm.html>here</a>
+for future reference.
+
+<p>
+
+<strong>QM/MM subdivision</strong>
+<p>
+The fully solvated protein system is too large for even a
+<i>semi-empirical</i> QM calculation. Therefore, we resort to a QM/MM
+description f the system. We split up the system in a small QM part
+and a much bigger MM part, as is shown in figure 3. The QM part
+consists of the same atoms we were using in the vacuum calculations
+and is described at the <i>semi-empirical</i> PM3 level of theory. The
+remainder of the system, consisting of the tail part (-R, figure 1) of
+the reactants, the protein, the water molecules and the chloride ions,
+is modeled with the GROMOS96 forcefield.
+ 
+<blockquote>
+<img src=qmmm_small.gif alt="" >
+</blockquote>
+
+<blockquote>
+<i><strong>Figure 3.</strong></i>division of the system in a QM
+subsystem and an MM subsystem. The QM subsystem is described at the
+<i>semi-empirical</i> QM level, while the remainder of the system,
+consisting of the reactants-aliphatic tail, protein, water molecules
+and ions is modeled with the GROMOS96 forcefield.
+</blockquote>
+
+<p>
+The QM/MM division splits the systems along a chemical
+bond. Therefore, we need to cap the QM subsystem with a so-called link
+atom (la, figure 3). This link atom is present as a hydrogen atom in
+the QM calculation step. It is not physically present in the MM
+subsystem, but the forces on it, that are computed in the QM step, are
+distributed over the two atoms of the bond. The bondlength itself is
+constrained during the computations.
+
+<p>
+
+To make use of the QM/MM functionality in Gromacs, we have to
+<ul>
+<li>
+<a HREF="#topol"> introduce link atoms at the QM/MM boundary, if
+needed</a>;
+<li>
+<a HREF="#ndx"> specify which atoms are to be treated at a QM
+level</a>;
+<li>
+<a HREF="#mdp">specify the QM level, basisset, type of QM/MM interface
+and so on</a>.
+</ul>
+
+
+<a NAME="topol">
+<strong>adding link atoms</strong>
+<p>
+At the bond that connects the QM and MM subsystems we introduce a link
+atom. In Gromacs we make use of a special atomtype, called LA. This
+atomtype is treated as a hydrogen atom in the QM calculation, and as a
+dummy atom in the forcefield calculation. The link atoms, if any, are
+part of the system, but have no interaction with any other atom,
+expect that the QM force working on it is distributed over the two
+atoms of the bond. In the topology the link atom (LA), therefore, is
+defined as a dummy atom:
+<blockquote>
+<font face="courier" color=black>
+[ dummies2 ]   <br>
+LA  QMatom MMatom 1 0.65<br>
+</font>
+</blockquote>
+The QM/MM topology file for the reactants shown in figure 3 is found
+here: <a HREF=../protein/topol_A.itp>topol_A.itp</a>. Note, that a
+link atom has no mass.
+<p>
+<a NAME="ndx">
+<strong>specifying the QM atoms</strong>
+<p>
+Once we have decided which atoms should be treated by a QM method, we
+add these atoms, including the link atoms, if any, to the index
+file. We can either use the make_ndx program, or hack the atoms into
+the index.ndx file ourselves. The index file we will use in this
+tutorial is found here: <a HREF=../protein/index.ndx>index.ndx</a>.
+<p>
+<a NAME="mdp">
+<strong>specifying the QM/MM simulation parameters</strong>
+<p>
+The last thing we need to do to setup gromacs for performing QM/MM
+calculations is to specify what level of QM theory gromacs has to use
+for the QM subsystem, what QM/MM interface to use, what multiplicity
+the QM subsystem has, and so on. All these things are defined in the
+mdp file. The following option lines need to be included for a QM/MM
+run:
+<blockquote>
+<font face="courier" color=black >
+QMMM                     = yes<br>
+QMMM-grps                = QMatoms<br>
+QMmethod                 = RHF<br>
+QMbasis                  = 3-21G*<br>
+QMMMscheme               = ONIOM<br>
+QMcharge                 = 0<br>
+QMmult                   = 1<br>
+</font>
+</blockquote>
+Note, that the default options are shown here. The actual options
+depend on the system. The mdp file we will use for the QM/MM
+transition state optimization is located here: <a
+HREF=../protein/TS.mdp>TS.mdp</a>.
+
+
+<p>
+Now that we know how QM/MM works in Gromacs, we will use it to carry
+the following steps:
+<ul>
+<li Type=> <a HREF="#TS">Optimize the transition state in the protein
+</a><br><br>
+
+<li Type=> <a HREF="#react">Optimize the reactant state in the protien
+</a><br><br>
+<li Type=> <a HREF="#prod">Optimize the product state in the protein
+</a>
+</ul>
+
+<a NAME="TS">
+<h1>Optimizing the transition state geometry in the protein</h1>
+
+We are going to perform a QM/MM transition state optimization on the
+protein-substrate complex to get the transition state geometry of the
+catalyzed Diels-Alder cycloaddition in the enzyme's active site. The
+coordinates, topologies, index file and mdp file have been prepared
+already.
+
+<p>
+<ul>
+<li Type=1>Download diels-alderase.tar.gz. This archive contains the
+input files for gromacs. Unpack the file<br><br>
+localhost:~>gunzip diels-alderase.tar.gz<br><br>
+localhost:~>tar -xvf diels-alderase.tar.gz<br><br>
+or alternatively all at once by:<br><br>
+localhost:~>tar -zxvf diels-alderase.tar.gz<br><br>
+
+<li Type=1>The options in TS.mdp are set such that gromacs optimizes
+the transition state. Let's have a look at that file before we
+proceed. We see that the integrator is TS, which means that gromacs is
+supposed to find a transition state geometry. Furthermore, we use the
+ONIOM QM/MM interface and a <i>semi-empirical</i> PM3 method for the
+QM subsystem. We define multiple energy_grps, so that we can
+afterwards easily determine the interactions between these different
+groups. With the grompp preprocessor we create a binary inputfile for
+gromacs<br><br> localhost:~>grompp -f TS.mdp -c confin.gro -n index.ndx -p
+topol.top -o topol_TS.tpr<br><br>
+
+<li Type=1>Use the mdrun programm with the inputfile generated to
+perform the actual optimization. This will take a while to
+complete.<br><br> localhost:~>mdrun -s topol_TS.tpr -c confout_TS.gro
+-e ener_TS.ene -o traj_TS.trr -x traj_TS.xtc -g md_TS.log<br><br>
+
+<li Type=1>When mdrun is finished succesfully, there should be a file
+called confout.gro. This file contains the optimized coordinates of
+the total system. Let's have a look at the system with rasmol. We need
+to convert the confout.gro file into pdb format. We can use the
+gromacs tool editconf<br><br> localhost:~>editconf -f confout_TS.gro
+-o confout_TS.pdb<br><br> We then read in the confout.pdb file with
+rasmol<br><br> localhost:~>rasmol confout_TS.pdb<br><br> let's leave
+out the water and ions, present the protein by ribbons and zoom in on
+the active site<br><br>
+
+<ul>
+<li>restrict protein,dat <li>center dat <li>zoom 600 <li>select
+dat<li>wireframe 50 <li>select protein <li>cartoons <li>color
+structure </ul><br><br>
+
+<img SRC=../rasmol/protein_step1.jpg ALT=""><br><br> Note, the
+chloride atoms are interpreted as carbon atoms by rasmol. The link
+atom, depicted here as a hydrogen, is located along the bond
+connecting the QM and MM subsystems.
+
+</ul>
+
+<a NAME="react">
+<h1>Optimizing the reactant state geometry in the protein</h1>
+
+Simply running a normal geomtry optimization from the same coordinates
+we used for the Transition State optimization results in the product
+geometry. The overall potential energy of this minimum is lower, and
+therefore more likely to be found. The prodcut geomerty is the aim of
+the next step (<a NAME="prod">Optimizing the product state geometry in
+the protein</a>) in this tutorial. In this step, we want to optimize
+the geometry of the reactants. 
+<p>
+
+<ul>
+<li Type=1>
+Manipulating the starting structure, which consists of the protein,
+watermolecules, ions and reactants in the transition state, is not as
+simple as it was before in vacuo. Therefore we try a different
+approach. We simply start a very short QM/MM molecular dynamics
+simulation, just as we will do in the next part of the tutorial. The
+starting point of these simulations is the transition state structure
+we just have obtained in the previous step. The details of the
+simulations we will address fully there. For now, it is enough that we
+understand that instead of an optimization, we can also perform a
+molecular dynamics simulation by replacing the TS integrator by the md
+integrator in the mdp file:
+<blockquote>
+<font face="courier" color=black>
+integrator = md <br> nsteps = 500<br> timestep = 0.001<br>
+</font>
+</blockquote>
+Let's try it. We will use the random velocity generation of Gromacs,
+to generate the initial velocities for the simulation. It is possible
+that the outcome of the simulation will be the product state instead
+of the reactant state. In that case we will rerun the simulation with
+different starting velocities by using a different <font
+face="courier" color=black>gen_seed</font> in the mdpfile.
+
+<p>
+
+<ul>
+<li>Make a different subdirectory, named runs.<br><br>
+localhost:~>mkdir runs<br><br> Copy the optimized transition state
+complex TS.mdp file to this dir.<br><br>
+localhost:~>cp TS.mdp runs<br><br>
+
+<li>go into the runs subdir and modify the TS.mdp file as
+indicated above using a text editor and save the resulting file as
+run_REACT.mdp.<br><br>
+
+<li>We create a binary inputfile for gromacs with grompp
+preprocessor, using the topologies, indexfile and outcome of the
+previous step<br><br> localhost:~>grompp -f run_REACT.mdp -c
+../confout_TS.gro -n ../index.ndx -p ../topol.top -o
+topol_run_REACT.tpr<br><br>
+
+<li>Use the mdrun program with the inputfile generated to
+perform the actual 500 ps molecular dynamics simulation. This will
+take a while to complete.<br><br> localhost:~>mdrun -s topol_TS.tpr -c
+confout_run_REACT.gro -e ener_run_REACT.ene -o traj_run_REACT.trr -x
+traj_run_REACT.xtc -g md_run_REACT.log<br><br>
+
+<li>Afterwards, we inspect the outcome visually. We first
+isolate the reactants coordinates from the confout_run_REACT.gro using
+the gromacs tool editconf:
+<br><br> localhost:~>editconf -f confout_run_REACT.gro -o dat.pdb<br><br>
+Then we open the dat.pdb file with rasmol
+<br><br> localhost:~>rasmol dat.pdb<br><br>
+
+<img SRC=../rasmol/protein_step2.jpg ALT=""><br><br> 
+
+<li>If the structure resembles the reactant state, <i>i.e.</i>,
+the two reactant molecules are no longer chemically bound together, we
+proceed to step 2. If the structure resembles more the product (see
+below), we try another simulation with a different gen_seed.
+</ul>
+<p>
+<li Type=1>Using the outcome of the short simulation, we perform a
+geometry optimization to obtain the reactant mimimum. 
+<p>
+<ul>
+<li>copy the confout_run_REACT.gro to confin_REACT.gro<br><br>
+localhost:~>cp confout_run_REACT.gro ../confin_REACT.gro<br><br>
+<li>Alter the integrator in the TS.mdp file to OPT (<font
+face="courier" color=black> integrator = OPT </font>)and save the file
+as REACT.mdp<br><br>
+<li>
+With the grompp preprocessor we create a binary inputfile for
+gromacs<br><br> localhost:~>grompp -f REACT.mdp -c confin_REACT.gro -n
+index.ndx -p topol.top -o topol_REACT.tpr<br><br>
+
+<li Type=1>Use the mdrun programm with the inputfile generated to
+perform the actual optimization. This will take a while to
+complete.<br><br> localhost:~>mdrun -s topol_REACT.tpr -c
+confout_REACT.gro -e ener_REACT.ene -o traj_REACT.trr -x
+traj_REACT.xtc -g md_REACT.log<br><br>
+
+<li Type=1>When mdrun is finished succesfully, we have a look at the
+result again. <br><br> localhost:~>editconf -f confout_REACT.gro -o
+confout_REACT.pdb<br><br> We then read in the confout_REACT.pdb file
+with rasmol<br><br> localhost:~>rasmol confout_REACT.pdb<br><br> let's
+leave out the water and ions, present the protein by ribbons and zoom
+in on the active site<br><br>
+
+<ul>
+<li>restrict protein,dat <li>center dat <li>zoom 600 <li>select
+dat<li>wireframe 50 <li>select protein <li>cartoons <li>color
+structure </ul><br><br>
+
+<img SRC=../rasmol/protein_step3.jpg ALT=""><br><br> 
+
+</ul>
+
+<p>
+<a NAME="prod">
+<h1>Optimizing the product state geometry in the protein</h1>
+
+We simply start an normal optimization from the optimized transition
+state structure. 
+
+<ul>
+<li Type=1>copy the confout_TS.gro to confin_PROD.gro<br><br>
+localhost:~>cp confout_TS.gro confin_PROD.gro<br><br> <li>
+Type=2>modify the mdp file line <li>With the grompp preprocessor we
+create a binary inputfile for gromacs<br><br> localhost:~>grompp -f
+TS.mdp -c confin.gro -n index.ndx -p topol.top -o topol_TS.tpr<br><br>
+
+<li Type=1>Use the mdrun programm with the inputfile generated to
+perform the actual optimization. This will take a while to
+complete.<br><br> localhost:~>mdrun -s topol_TS.tpr -c confout_TS.gro
+-e ener_TS.ene -o traj_TS.trr -x traj_TS.xtc -g md_TS.log<br><br>
+
+
+<p>
+<table>
+<tr>
+<td>Next:</td> <td><a HREF="TS4.html#top"> III. Molecular Dynamics
+Simulations of the reaction, using the transition states as starting
+points</a></td>
+<tr>
+<td>Previous:</td>
+<td><a HREF="TS2.html#top"> I. Optimization of the product,
+reactant and transition state geometries <i>in vacuo</i></a></td>
+<tr>
+</table>
+<p>
+<a HREF="#top">back to top</a>
+
+<hr size="1"> updated 12/07/04
+
+
+</body>
+</html>
+

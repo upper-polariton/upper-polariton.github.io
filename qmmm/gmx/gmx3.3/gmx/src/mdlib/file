@@ -1,0 +1,61 @@
+                         :-)  G  R  O  M  A  C  S  (-:
+
+               Giant Rising Ordinary Mutants for A Clerical Setup
+
+                       :-)  VERSION 3.1.99_20020920  (-:
+
+
+                      PLEASE NOTE: THIS IS A BETA VERSION
+
+
+       Copyright (c) 1991-2002, University of Groningen, The Netherlands
+         This program is free software; you can redistribute it and/or
+          modify it under the terms of the GNU General Public License
+         as published by the Free Software Foundation; either version 2
+             of the License, or (at your option) any later version.
+
+                :-)  /home/groenhof/w2/gmx/src/kernel/mdrun  (-:
+
+Option     Filename  Type          Description
+------------------------------------------------------------
+  -s      topol.tpr  Input       Generic run input: tpr tpb tpa xml
+  -o       traj.trr  Output      Full precision trajectory: trr trj
+  -x       traj.xtc  Output, Opt.Compressed trajectory (portable xdr format)
+  -c    confout.gro  Output      Generic structure: gro g96 pdb xml
+  -e       ener.edr  Output      Generic energy: edr ene
+  -g         md.log  Output      Log file
+-dgdl      dgdl.xvg  Output, Opt.xvgr/xmgr file
+-table    table.xvg  Input, Opt. xvgr/xmgr file
+-rerun    rerun.xtc  Input, Opt. Generic trajectory: xtc trr trj gro g96 pdb
+ -ei        sam.edi  Input, Opt. ED sampling input
+ -eo        sam.edo  Output, Opt.ED sampling output
+  -j       wham.gct  Input, Opt. General coupling stuff
+ -jo        bam.gct  Input, Opt. General coupling stuff
+-ffout      gct.xvg  Output, Opt.xvgr/xmgr file
+-devout   deviatie.xvg  Output, Opt.xvgr/xmgr file
+-runav  runaver.xvg  Output, Opt.xvgr/xmgr file
+ -pi       pull.ppa  Input, Opt. Pull parameters
+ -po    pullout.ppa  Output, Opt.Pull parameters
+ -pd       pull.pdo  Output, Opt.Pull data output
+ -pn       pull.ndx  Input, Opt. Index file
+-mtx         nm.mtx  Output, Opt.Hessian matrix
+ -dn     dipole.ndx  Output, Opt.Index file
+
+      Option   Type  Value  Description
+------------------------------------------------------
+      -[no]h   bool     no  Print help info and quit
+      -[no]X   bool     no  Use dialog box GUI to edit command line options
+       -nice    int     19  Set the nicelevel
+     -deffnm string         Set the default filename for all file options
+         -np    int      1  Number of nodes, must be the same as used for
+                            grompp
+      -[no]v   bool     no  Be loud and noisy
+-[no]compact   bool    yes  Write a compact log file
+  -[no]multi   bool     no  Do multiple simulations in parallel (only with -np
+                            > 1)
+   -[no]glas   bool     no  Do glass simulation with special long range
+                            corrections
+ -[no]ionize   bool     no  Do a simulation including the effect of an X-Ray
+                            bombardment on your system
+
+Fatal error: File topol.tpr not found

@@ -1,0 +1,20 @@
+; ########################################################################
+; #                                                                      # 
+; #              ffamber ports for GROMACS 3.3 - Nov. 2005               #
+; #         Eric J. Sorin & Sanghyun Park - Stanford University          #
+; #   please cite: Sorin & Pande (2005). Biophys. J. 88(4), 2472-2493.   #
+; #            for additional information, tools, and updates            #
+; #          please consult http://folding.stanford.edu/ffamber/         #
+; #                                                                      #
+; ########################################################################
+
+#define _FF_AMBER
+#define _FF_AMBER99
+
+[ defaults ]
+; nbfunc        comb-rule       gen-pairs       fudgeLJ fudgeQQ
+1               2               yes             0.5     0.8333
+
+#include "ffamber99nb.itp"
+#include "ffamber99bon.itp"
+

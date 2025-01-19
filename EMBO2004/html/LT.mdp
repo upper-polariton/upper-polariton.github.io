@@ -1,0 +1,54 @@
+title                    = my_mdp_file
+cpp                      = /lib/cpp
+include                  = 
+define                   = -DFLEX_SPC 
+
+integrator               = steep
+
+nsteps                   = 500
+emtol                    = 600.0;1000.0
+emstep                   = 0.00005
+
+comm_mode                = Linear
+nstcomm                  = 1
+comm_grps                = system
+
+nstxout                  = 10
+nstvout                  = 10
+nstfout                  = 10
+nstlog                   = 10
+nstenergy                = 1
+nstxtcout                = 1
+xtc-precision            = 1
+xtc_grps                 = system
+energy_grps              = REACT DUM SOL NA+
+
+nstlist                  = 10
+ns_type                  = grid
+pbc                      = xyz
+rlist                    = 1.0
+coulombtype              = Reaction-Field
+rcoulomb-switch          = 0
+rcoulomb                 = 1.6
+epsilon_r                = 50.0
+
+vdwtype                  = Cut-off
+rvdw-switch              = 0
+rvdw                     = 1.6
+DispCorr                 = No
+
+constraints              = none
+constraint_algorithm     = LINCS
+unconstrained_start      = no
+shake_tol                = 0.0001
+lincs_order              = 4
+lincs_warnangle          = 30
+morse                    = no
+
+QMMM                     = yes
+QMMM-grps                = QMatoms
+QMmethod                 = PM3
+QMbasis                  = STO-3G
+QMMMscheme               = ONIOM
+QMcharge                 = 0
+QMmult                   = 1

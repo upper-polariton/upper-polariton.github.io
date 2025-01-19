@@ -1,0 +1,649 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"  
+  "http://www.w3.org/TR/html4/loose.dtd">  
+<html > 
+<head><title></title> 
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"> 
+<meta name="generator" content="TeX4ht (http://www.cse.ohio-state.edu/~gurari/TeX4ht/)"> 
+<meta name="originator" content="TeX4ht (http://www.cse.ohio-state.edu/~gurari/TeX4ht/)"> 
+<!-- html --> 
+<meta name="src" content="exercise1.tex"> 
+<meta name="date" content="2014-12-04 10:49:00"> 
+<link rel="stylesheet" type="text/css" href="exercise1.css"> 
+</head><body 
+>
+                                                                     
+
+                                                                     
+   <h3 class="likesectionHead"><a 
+ id="x1-1000"></a>Calculating Free Energies</h3>
+<!--l. 55--><p class="noindent" >We will compute the free energy associated with an electron transfer between a Cu(I) and
+Cu(II) ion. How large is this free energy?
+<!--l. 58--><p class="indent" >   Since we know the reference free energy, we can verify the validity and
+accuracy of our simulations. We proceed in steps, using different, but related
+methods:
+     <ul class="itemize1">
+     <li class="itemize">Free energy Perturbation (Zwanzig)
+     </li>
+     <li class="itemize">Acceptance Ratios (Bennet)
+     </li>
+     <li class="itemize">Thermodynamic Integration (Kirkwood)
+     </li>
+     <li class="itemize">Non-Equilibrium approaches (Jarzynski)</li></ul>
+<!--l. 68--><p class="noindent" >
+   <h4 class="likesubsectionHead"><a 
+ id="x1-2000"></a>System setup</h4>
+<!--l. 70--><p class="noindent" >First, use your favorite molecule editor to create two Copper ions and save the file as a
+pdb file. Next, manipulate this file such that the atoms are in different goups (with
+different group index, if you&#8217;re unsure, look for an explanation of the pdb format
+on-line). Also, name the groups CU1+ and CU1+, and both atoms CU. The reason
+for using the same group names is that in the Gromos force field, which we
+will use here, the Lennard-Jones parameters are different for both ions, which
+could complicate things later. We will not care about the precise nature of the
+                                                                     
+
+                                                                     
+atomtype, but for more precise work, one should consider chaning also the
+atomtypes.
+<!--l. 81--><p class="indent" >   Center the two ions in a cubic box of volume 4x4x4 nm<sup><span 
+class="cmr-8">3</span></sup>. Assuming you have named
+your pdb 2Cu.pdb, you can do this with editconf:
+                                                                     
+
+                                                                     
+   <div class="verbatim" id="verbatim-1">
+editconf&#x00A0;-f&#x00A0;2Cu.pdb&#x00A0;-c&#x00A0;-box&#x00A0;4&#x00A0;4&#x00A0;4&#x00A0;-o&#x00A0;2Cu_in_box.pdb
+</div>
+<!--l. 85--><p class="nopar" > Next, we use pdb2gmx to automatically generate a topology file for this system. Before
+we do that, we check whether the atom names are what we want them to be. Open the
+coordinate file you have just created with your favorite text editor. It must look
+like:
+                                                                     
+
+                                                                     
+   <div class="verbatim" id="verbatim-2">
+&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;two&#x00A0;copper&#x00A0;ions&#x00A0;in&#x00A0;a&#x00A0;box
+&#x00A0;<br />&#x00A0;&#x00A0;&#x00A0;&#x00A0;2
+&#x00A0;<br />&#x00A0;&#x00A0;&#x00A0;&#x00A0;1CU1+&#x00A0;&#x00A0;&#x00A0;&#x00A0;CU&#x00A0;&#x00A0;&#x00A0;&#x00A0;1&#x00A0;&#x00A0;&#x00A0;0.000&#x00A0;&#x00A0;&#x00A0;0.000&#x00A0;&#x00A0;&#x00A0;0.000
+&#x00A0;<br />&#x00A0;&#x00A0;&#x00A0;&#x00A0;2CU1+&#x00A0;&#x00A0;&#x00A0;&#x00A0;CU&#x00A0;&#x00A0;&#x00A0;&#x00A0;2&#x00A0;&#x00A0;&#x00A0;0.000&#x00A0;&#x00A0;&#x00A0;0.000&#x00A0;&#x00A0;&#x00A0;2.000
+&#x00A0;<br />&#x00A0;&#x00A0;&#x00A0;4.00000&#x00A0;&#x00A0;&#x00A0;4.00000&#x00A0;&#x00A0;&#x00A0;4.00000
+</div>
+<!--l. 96--><p class="nopar" > If it indeed does (otherwise fix it), then use pdb2gmx as follows:
+                                                                     
+
+                                                                     
+   <div class="verbatim" id="verbatim-3">
+pdb2gmx&#x00A0;-f&#x00A0;2Cu_in_box.pdb
+</div>
+<!--l. 100--><p class="nopar" > You will get asked which force field to use. Choose GROMOS96 43a2. Have a look at
+the files that are created, in particular the topol.top file, which contains the topology of
+this system. Try to understand that the topology includes the charges on the two
+copper ions. We will call this situation, in which there is a 1+ charge on the first
+copper ion and a 2+ charge on the second copper, state A. THe purpose of the
+exercise is to compute the free energy difference between state A and state
+B, in which the charge of the first copper ion is 2+ and that of the second 1+.
+Shortly, we will manualy create the topolgy of the B state by changing these
+charges.
+<!--l. 112--><p class="indent" >   Because we&#8217;re interested in the free energy of electron transfer in water, we now add
+water automatically with the genbox command of gromacs:
+                                                                     
+
+                                                                     
+   <div class="verbatim" id="verbatim-4">
+genbox&#x00A0;-cp&#x00A0;conf.gro&#x00A0;-cs&#x00A0;spc216.gro&#x00A0;-p&#x00A0;-o&#x00A0;solvated.pdb
+</div>
+<!--l. 117--><p class="nopar" > The last option ensures that the topology gets automatically updated as well. Have a look
+at the modified topology file. You can also view the solvated system with your
+favorite pdb viewer. You can see the water looks a bit ordered. We will perform an
+energy minimization to get rid of strain first. Use the following mdp file. Use the
+on-line gromacs manual on the mdp keyword to learn and understand what each
+option is doing. There are many options, which we will (and can) ignore for
+now.
+                                                                     
+
+                                                                     
+   <div class="verbatim" id="verbatim-5">
+title&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;=&#x00A0;Yo
+&#x00A0;<br />cpp&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;=&#x00A0;/usr/bin/cpp
+&#x00A0;<br />include&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;=
+&#x00A0;<br />define&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;=
+&#x00A0;<br />
+&#x00A0;<br />
+&#x00A0;<br />integrator&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;=&#x00A0;steep
+&#x00A0;<br />nsteps&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;=&#x00A0;500
+&#x00A0;<br />comm-mode&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;=&#x00A0;Linear
+&#x00A0;<br />nstcomm&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;=&#x00A0;1
+&#x00A0;<br />comm-grps&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;=
+&#x00A0;<br />
+&#x00A0;<br />emtol&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;=&#x00A0;100
+&#x00A0;<br />emstep&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;=&#x00A0;0.01
+&#x00A0;<br />
+&#x00A0;<br />nstxout&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;=&#x00A0;0
+&#x00A0;<br />nstvout&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;=&#x00A0;0
+&#x00A0;<br />nstfout&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;=&#x00A0;0
+&#x00A0;<br />
+&#x00A0;<br />nstlog&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;=&#x00A0;500
+&#x00A0;<br />nstenergy&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;=&#x00A0;500
+&#x00A0;<br />
+&#x00A0;<br />nstlist&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;=&#x00A0;5
+&#x00A0;<br />
+                                                                     
+
+                                                                     
+&#x00A0;<br />ns_type&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;=&#x00A0;grid
+&#x00A0;<br />pbc&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;=&#x00A0;xyz
+&#x00A0;<br />rlist&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;=&#x00A0;0.9
+&#x00A0;<br />
+&#x00A0;<br />coulombtype&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;=&#x00A0;PME
+&#x00A0;<br />rcoulomb-switch&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;=&#x00A0;0
+&#x00A0;<br />rcoulomb&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;=&#x00A0;0.9
+&#x00A0;<br />epsilon-r&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;=&#x00A0;1
+&#x00A0;<br />vdw-type&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;=&#x00A0;Cut-off
+&#x00A0;<br />rvdw-switch&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;=&#x00A0;0
+&#x00A0;<br />rvdw&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;=&#x00A0;0.9
+&#x00A0;<br />
+&#x00A0;<br />DispCorr&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;=&#x00A0;EnerPres
+&#x00A0;<br />
+&#x00A0;<br />fourierspacing&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;=&#x00A0;0.12
+&#x00A0;<br />pme_order&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;=&#x00A0;4
+&#x00A0;<br />ewald_rtol&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;=&#x00A0;1e-05
+&#x00A0;<br />ewald_geometry&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;=&#x00A0;3d
+&#x00A0;<br />epsilon_surface&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;=&#x00A0;0
+&#x00A0;<br />optimize_fft&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;=&#x00A0;no
+&#x00A0;<br />
+&#x00A0;<br />Tcoupl&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;=&#x00A0;berendsen
+&#x00A0;<br />tc-grps&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;=&#x00A0;System
+&#x00A0;<br />tau_t&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;=&#x00A0;0.1
+&#x00A0;<br />ref_t&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;=&#x00A0;300
+&#x00A0;<br />
+&#x00A0;<br />Pcoupl&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;=&#x00A0;berendsen
+                                                                     
+
+                                                                     
+&#x00A0;<br />Pcoupltype&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;=&#x00A0;isotropic
+&#x00A0;<br />tau_p&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;=&#x00A0;0.5
+&#x00A0;<br />compressibility&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;=&#x00A0;4.5e-5
+&#x00A0;<br />ref_p&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;=&#x00A0;1.0
+&#x00A0;<br />
+&#x00A0;<br />gen_vel&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;=&#x00A0;yes
+&#x00A0;<br />gen_temp&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;=&#x00A0;300
+&#x00A0;<br />gen_seed&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;=&#x00A0;1993
+&#x00A0;<br />
+</div>
+<!--l. 187--><p class="nopar" > Save these settings in a file with extension .mdp. To generate the input for the mdrun
+program, we use the gromacs-pre-processor:
+                                                                     
+
+                                                                     
+   <div class="verbatim" id="verbatim-6">
+grompp&#x00A0;-f&#x00A0;minimize.mdp&#x00A0;-c&#x00A0;solvated.gro&#x00A0;-p&#x00A0;topol.top
+</div>
+<!--l. 192--><p class="nopar" > This creates a topol.tpr. If there are errors or warnings, check them. If a topol.tpr is
+created, you can perform the energy minimization (a steepest descent) with the mdrun
+program:
+                                                                     
+
+                                                                     
+   <div class="verbatim" id="verbatim-7">
+mdrun&#x00A0;-v
+</div>
+<!--l. 196--><p class="nopar" > After minimization inspect the structure. It is not essential to reach the required
+convergence threshold here as we&#8217;re only interested to get rid of strain due
+to incorrect placement of water molecules. You can use pdb2gmx to convert
+the confout.gro into a pdb file that you can open with your favorite molecule
+viewer. If all looks all-right, proceed with neutralizing the system with 3 Cl<sup><span 
+class="cmsy-8">-</span></sup>
+counter-ions. Remember from the lecture on Ewald and PME that charge neutrality is
+important. We use the genion program to do this automatically. This program needs a
+tpr file, so we first need to generate that file with grompp again. We use the
+confout.gro (<span 
+class="ptmri8t-x-x-109">i.e. </span>the end structure of the minimization) as the input structure
+file:
+                                                                     
+
+                                                                     
+   <div class="verbatim" id="verbatim-8">
+grompp&#x00A0;-c&#x00A0;confout.gro&#x00A0;-f&#x00A0;minimize.mdp&#x00A0;-p&#x00A0;topol.top
+</div>
+<!--l. 210--><p class="nopar" > then use genion:
+                                                                     
+
+                                                                     
+   <div class="verbatim" id="verbatim-9">
+genion&#x00A0;-s&#x00A0;topol.tpr&#x00A0;-nname&#x00A0;CL-&#x00A0;-nn&#x00A0;3&#x00A0;-nq&#x00A0;-1&#x00A0;-np&#x00A0;-pname&#x00A0;NA+&#x00A0;-pq&#x00A0;1&#x00A0;-o&#x00A0;neutral.gro
+</div>
+<!--l. 214--><p class="nopar" > It probably is a good idea to also energy minimize the neutral.gro structure.
+<!--l. 218--><p class="indent" >   Next, we perform an 100 ps equilibration simulation. No idea if this is enough to
+reach thermal equilibrium, but we&#8217;ll ignore this for now. By what criteria would you
+consider the system equilibrated? We will run now at a constant temperature, using
+so-called weak-coupling. The .mdp file contains the following options. Again, make sure
+you understand what these options are doing. And why we use them. If not,
+ask!
+                                                                     
+
+                                                                     
+   <div class="verbatim" id="verbatim-10">
+title&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;=&#x00A0;Yo
+&#x00A0;<br />cpp&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;=&#x00A0;/usr/bin/cpp
+&#x00A0;<br />include&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;=
+&#x00A0;<br />define&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;=
+&#x00A0;<br />integrator&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;=&#x00A0;md
+&#x00A0;<br />tinit&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;=&#x00A0;0
+&#x00A0;<br />dt&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;=&#x00A0;0.002
+&#x00A0;<br />nsteps&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;=&#x00A0;50000
+&#x00A0;<br />init_step&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;=&#x00A0;0
+&#x00A0;<br />comm-mode&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;=&#x00A0;Linear
+&#x00A0;<br />nstcomm&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;=&#x00A0;1
+&#x00A0;<br />nstxout&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;=&#x00A0;500
+&#x00A0;<br />nstvout&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;=&#x00A0;0
+&#x00A0;<br />nstfout&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;=&#x00A0;0
+&#x00A0;<br />nstcheckpoint&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;=&#x00A0;1000
+&#x00A0;<br />nstlog&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;=&#x00A0;500
+&#x00A0;<br />nstenergy&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;=&#x00A0;500
+&#x00A0;<br />nstlist&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;=&#x00A0;5
+&#x00A0;<br />ns_type&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;=&#x00A0;grid
+&#x00A0;<br />pbc&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;=&#x00A0;xyz
+&#x00A0;<br />rlist&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;=&#x00A0;0.9
+&#x00A0;<br />domain-decomposition&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;=&#x00A0;no
+&#x00A0;<br />coulombtype&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;=&#x00A0;PME
+&#x00A0;<br />rcoulomb-switch&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;=&#x00A0;0
+                                                                     
+
+                                                                     
+&#x00A0;<br />rcoulomb&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;=&#x00A0;0.9
+&#x00A0;<br />epsilon-r&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;=&#x00A0;1
+&#x00A0;<br />vdw-type&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;=&#x00A0;Cut-off
+&#x00A0;<br />rvdw-switch&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;=&#x00A0;0
+&#x00A0;<br />rvdw&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;=&#x00A0;0.9
+&#x00A0;<br />DispCorr&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;=&#x00A0;EnerPres
+&#x00A0;<br />fourierspacing&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;=&#x00A0;0.12
+&#x00A0;<br />fourier_nx&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;=&#x00A0;0
+&#x00A0;<br />fourier_ny&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;=&#x00A0;0
+&#x00A0;<br />fourier_nz&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;=&#x00A0;0
+&#x00A0;<br />pme_order&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;=&#x00A0;4
+&#x00A0;<br />ewald_rtol&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;=&#x00A0;1e-05
+&#x00A0;<br />ewald_geometry&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;=&#x00A0;3d
+&#x00A0;<br />epsilon_surface&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;=&#x00A0;0
+&#x00A0;<br />optimize_fft&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;=&#x00A0;no
+&#x00A0;<br />Tcoupl&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;=&#x00A0;berendsen
+&#x00A0;<br />tc-grps&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;=&#x00A0;System
+&#x00A0;<br />tau_t&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;=&#x00A0;0.1
+&#x00A0;<br />ref_t&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;=&#x00A0;300
+&#x00A0;<br />Pcoupl&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;=&#x00A0;berendsen
+&#x00A0;<br />Pcoupltype&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;=&#x00A0;isotropic
+&#x00A0;<br />tau_p&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;=&#x00A0;0.5
+&#x00A0;<br />compressibility&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;=&#x00A0;4.5e-5
+&#x00A0;<br />ref_p&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;=&#x00A0;1.0
+&#x00A0;<br />gen_vel&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;=&#x00A0;yes
+&#x00A0;<br />gen_temp&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;=&#x00A0;300
+&#x00A0;<br />gen_seed&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;=&#x00A0;1993
+                                                                     
+
+                                                                     
+&#x00A0;<br />
+</div>
+<!--l. 278--><p class="nopar" > With this input file, you can create a tpr file as before, and use it with mdrun.
+<!--l. 282--><p class="noindent" >
+   <h4 class="likesubsectionHead"><a 
+ id="x1-3000"></a>Free energy Perturbation</h4>
+<!--l. 284--><p class="noindent" >After equilibration, we will perform a simulation of 1 ns, and use this trajectory for FEP.
+Change the number of steps in the mdp file to request a 1 ns simulation and carry out the
+simulations. Save the configurations every ps. This simulation will take 10 times longer
+than the equilibrium simulation.
+<!--l. 290--><p class="indent" >   After the simulation is done, we will use the -rerun option of MD run to calculate
+<span 
+class="cmmi-10x-x-109">V</span> <sub><span 
+class="cmmi-8">B</span></sub> <span 
+class="cmsy-10x-x-109">- </span><span 
+class="cmmi-10x-x-109">V</span> <sub><span 
+class="cmmi-8">A</span></sub> for every frame in the trajectory. The topology file that we use for
+the rerun should thus reflect the situation in state B (i.e. the first copper ion
+should have a +2 charge and the second a +1 charge). Save the state A topology
+that we have been using until now under a different name, such as topol_B.itp
+and make the required modificaiton to the [ atoms ] section in that topology
+file.
+<!--l. 298--><p class="indent" >   Use the new topology of state B to create a new run input file (tpr). Better use a
+different name than before, or even better, create a new directory and perform the
+new calculation there. You also need to set the output options to 1, i.e. each
+step, because the trajectory contains only snapshots every 500 steps (i.e. each
+ps).
+<!--l. 304--><p class="indent" >   After creating the new tpr file, copy also the old trajectory file belonging to state A to
+the current location and perform the rerun:
+                                                                     
+
+                                                                     
+   <div class="verbatim" id="verbatim-11">
+mdrun&#x00A0;-rerun&#x00A0;traj.trr&#x00A0;-s&#x00A0;state_B.tpr
+</div>
+<!--l. 307--><p class="nopar" > You can get access to the energies stored in the edr file with g_energy and select the
+potential energy (why?). Extract also the potential energy from the previous simulation
+(state A). From these energies, calculate the free energy from the Zwanzig equation, as
+was explained in the lecture:
+   <table 
+class="equation"><tr><td><a 
+ id="x1-3001r1"></a>
+   <center class="math-display" >
+<img 
+src="exercise10x.png" alt="                     (VB  - VA)
+&#x0394;F  =  - RT ln[&#x27E8;exp(- ---RT----)&#x27E9;A]
+" class="math-display" ></center></td><td class="equation-label">(1)</td></tr></table>
+<!--l. 315--><p class="nopar" >
+What is the free energy differnce? What is the error. Why is it so large?
+<!--l. 319--><p class="indent" >   The error is due to poor overlap. We have not sampled enough configurations in
+which the water molecules are oriented so as to favour the product state.
+<!--l. 323--><p class="indent" >   To reduce the error, we will perform the FEP is smaller steps. Consider the situation
+in which compute the free energy for smaller steps Cu<sup><span 
+class="cmr-8">+</span></sup>+Cu<sup><span 
+class="cmr-8">2+</span></sup> <span 
+class="cmsy-10x-x-109">&#x2192;</span>Cu<sup><span 
+class="cmr-8">1</span><span 
+class="cmmi-8">.</span><span 
+class="cmr-8">1+</span></sup>+Cu<sup><span 
+class="cmr-8">1</span><span 
+class="cmmi-8">.</span><span 
+class="cmr-8">9+</span></sup>,
+Cu<sup><span 
+class="cmr-8">1</span><span 
+class="cmmi-8">.</span><span 
+class="cmr-8">1+</span></sup>+Cu<sup><span 
+class="cmr-8">1</span><span 
+class="cmmi-8">.</span><span 
+class="cmr-8">9+</span></sup> <span 
+class="cmsy-10x-x-109">&#x2192;</span>Cu<sup><span 
+class="cmr-8">1</span><span 
+class="cmmi-8">.</span><span 
+class="cmr-8">2+</span></sup>+Cu<sup><span 
+class="cmr-8">1</span><span 
+class="cmmi-8">.</span><span 
+class="cmr-8">8+</span></sup>, and so on. Of course this is not possible
+in reality, where there exist no non-integer electron charges, but because free
+                                                                     
+
+                                                                     
+energy is a state function, we are free to choose whatever path we like. The
+total free energy is the sum of the free energies associated with these smaller
+steps.
+   <table 
+class="equation"><tr><td><a 
+ id="x1-3002r2"></a>
+   <center class="math-display" >
+<img 
+src="exercise11x.png" alt="      &#x2211;n
+&#x0394;F  =    &#x03B4;Fi
+      i=1
+" class="math-display" ></center></td><td class="equation-label">(2)</td></tr></table>
+<!--l. 335--><p class="nopar" >
+with
+   <table 
+class="equation"><tr><td><a 
+ id="x1-3003r3"></a>
+   <center class="math-display" >
+<img 
+src="exercise12x.png" alt="                         (1+i&#x2215;n)+      (2-i&#x2215;n)+         (1+ (i-1)&#x2215;n)+      (2-(i- 1)&#x2215;n)+
+&#x03B4;Fi = - RT ln[&#x27E8;exp[- V-(Cu-------+-Cu--------)--V-(Cu------------+-Cu-----------)]&#x27E9;i-1]
+                                                RT
+" class="math-display" ></center></td><td class="equation-label">(3)</td></tr></table>
+<!--l. 339--><p class="nopar" >
+                                                                     
+
+                                                                     
+Unless you&#8217;re handy with scripting, create <span 
+class="cmmi-10x-x-109">n </span>subdirectories (or more) and copy the
+topology file of state A to each of those. Then, in each subdirectory <span 
+class="cmmi-10x-x-109">i </span>change the charges
+of the first copper ion to <span 
+class="cmr-10x-x-109">1 + </span><span 
+class="cmmi-10x-x-109">i&#x2215;n </span>and the second to <span 
+class="cmr-10x-x-109">2 </span><span 
+class="cmsy-10x-x-109">- </span><span 
+class="cmmi-10x-x-109">i&#x2215;n</span>. Run and re-run all
+simulations and compute the total <span 
+class="cmr-10x-x-109">&#x0394;</span><span 
+class="cmmi-10x-x-109">F </span>. Did the error get smaller? Why is this (remember
+what we discussed in the lectrure about the tails of the distributions). For convenience in
+the next exercise, store the files containing <span 
+class="cmmi-10x-x-109">V</span> <sub><span 
+class="cmmi-8">i</span><span 
+class="cmr-8">+1</span></sub> <span 
+class="cmsy-10x-x-109">- </span><span 
+class="cmmi-10x-x-109">V</span> <sub><span 
+class="cmmi-8">i</span></sub> evaluated in ensembe (<span 
+class="ptmri8t-x-x-109">i.e.</span>
+trajectory) <span 
+class="cmmi-10x-x-109">i</span>.
+<!--l. 351--><p class="noindent" >
+   <h4 class="likesubsectionHead"><a 
+ id="x1-4000"></a>Acceptance Ratio</h4>
+<!--l. 353--><p class="noindent" >The FEP approach is assymmetric, and we have seen that even if we take very small
+perturbation steps, we still do not get close to the reference free energy value of zero. To
+overcome this problem, we will now use Bennet&#8217;s Acceptance Ratio on our FEP data.
+Hopefully you have not deleted the files yet.
+<!--l. 359--><p class="indent" >   As explained in the lecture, the statistical error of each FEP step is minimized
+if
+   <table 
+class="equation"><tr><td><a 
+ id="x1-4001r4"></a>
+   <center class="math-display" >
+<img 
+src="exercise13x.png" alt=" &#x2211;                                  &#x2211;
+     -------------1-------------- =     -------------1--------------
+sim.B 1+  exp [&#x03B2; (VA (r)- VB (r) + C)]   sim.A 1 + exp[&#x03B2;(VB(r)-  VA(r)- C ]
+" class="math-display" ></center></td><td class="equation-label">(4)</td></tr></table>
+                                                                     
+
+                                                                     
+<!--l. 363--><p class="nopar" >
+where the sum is over the number of snapshots at which we wrote the potential energy to
+the edr file (nstenergy). The optimal free energy is that C for which the above
+equation is true: <span 
+class="cmr-10x-x-109">&#x0394;</span><span 
+class="cmmi-10x-x-109">F </span><span 
+class="cmr-10x-x-109">= </span><span 
+class="cmmi-10x-x-109">C</span>. Because C appears on both sides of the equation, we
+need to do this numerically. The most straighforward, but probably not most
+efficient, way to do this is to scan over C and calculate both sides of the equation,
+while increasing C. We can do this first with a rough grid, <span 
+class="ptmri8t-x-x-109">i.e. </span>a large spacing
+between subsequent values of C. From this initial scan we take the C values
+which give the smallest difference between the right and left hand sides of the
+equation, and increase the resolution of the grid around that value in a second
+scan.
+<!--l. 377--><p class="indent" >   In order to use the data from the multi-step FEP exercise, we need also the
+backwards FEP data. That is, starting at last point <span 
+class="cmmi-10x-x-109">n</span>, we need to evaluate for all steps
+i:
+   <table 
+class="equation"><tr><td><a 
+ id="x1-4002r5"></a>
+   <center class="math-display" >
+<img 
+src="exercise14x.png" alt="                         (2-(i-1)&#x2215;n)+     (1+(i- 1)&#x2215;n)+         (2-i&#x2215;n)+      (1+i&#x2215;n)+
+&#x03B4;Fi = - RT ln[&#x27E8;exp[- V-(Cu-----------+-Cu-----------)--V-(Cu--------+-Cu--------)]&#x27E9;i]
+                                                RT
+" class="math-display" ></center></td><td class="equation-label">(5)</td></tr></table>
+<!--l. 382--><p class="nopar" >
+where the sum over <span 
+class="cmmi-10x-x-109">i </span>runs from <span 
+class="cmmi-10x-x-109">n </span>down to 1. Now, we&#8217;re only interested in files
+                                                                     
+
+                                                                     
+containing <span 
+class="cmmi-10x-x-109">V</span> <sub><span 
+class="cmmi-8">i</span><span 
+class="cmsy-8">-</span><span 
+class="cmr-8">1</span></sub> <span 
+class="cmsy-10x-x-109">- </span><span 
+class="cmmi-10x-x-109">V</span> <sub><span 
+class="cmmi-8">i</span></sub> evaluated in ensemble <span 
+class="cmmi-10x-x-109">i</span>, which you therefore need to create and
+store.
+<!--l. 387--><p class="indent" >   Now that you have on disc the files with <span 
+class="cmmi-10x-x-109">V</span> <sub><span 
+class="cmmi-8">A</span></sub> and <span 
+class="cmmi-10x-x-109">V</span> <sub><span 
+class="cmmi-8">B</span></sub> for the forward and backward
+FEP for each step <span 
+class="cmmi-10x-x-109">i</span>, we search for the optimal values of <span 
+class="cmmi-10x-x-109">C</span><sub><span 
+class="cmmi-8">i</span></sub> in each step <span 
+class="cmmi-10x-x-109">i</span>. I recommend
+using a spreadsheet, MatLab, or Mathematica. Alternatively, knowing how to write
+scripts, and a little bit of awk, will make your life easier.
+<!--l. 393--><p class="indent" >   What is the Free energy estimate from Bennet Acceptance Ratio?
+<!--l. 396--><p class="noindent" >
+   <h4 class="likesubsectionHead"><a 
+ id="x1-5000"></a>Thermodynamic Integration</h4>
+<!--l. 398--><p class="noindent" >For this exercise we will make use of Gromacs&#8217; functionality to carry out a thermo
+dynamic integration. As discussed in the lecture, a free energy estimate is obtained
+as
+   <table 
+class="equation"><tr><td><a 
+ id="x1-5001r6"></a>
+   <center class="math-display" >
+<img 
+src="exercise15x.png" alt="        &#x222B; 0 &#x2202;V        n&#x2211;steps &#x2202;V
+&#x0394;FAB  =    &#x27E8;---&#x27E9;&#x03BB;d&#x03BB; &#x2248;     &#x27E8;---&#x27E9;&#x03BB;&#x0394;&#x03BB;
+         1  &#x2202; &#x03BB;         i  &#x2202;&#x03BB;
+" class="math-display" ></center></td><td class="equation-label">(6)</td></tr></table>
+<!--l. 403--><p class="nopar" >
+Better carry out this exercise in a new subdirectory. As before, we will use perform the
+calculations in ten steps. THerefore create ten subdirectories and copy the mdp into each
+                                                                     
+
+                                                                     
+of them. Add to each of the mdp files the keywords to active the thermodynamic
+integration
+                                                                     
+
+                                                                     
+   <div class="verbatim" id="verbatim-12">
+free-energy&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;=&#x00A0;yes
+&#x00A0;<br />init-lambda&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;=&#x00A0;0
+&#x00A0;<br />delta-lambda&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;=&#x00A0;0
+&#x00A0;<br />sc-alpha&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;=&#x00A0;0
+&#x00A0;<br />sc-sigma&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;=&#x00A0;0.3
+</div>
+<!--l. 415--><p class="nopar" > We can control the lambda value with the init-lambda keyword. Set it to 0,0.1,0.2,...1 in
+the corresponding subdirectories.
+<!--l. 418--><p class="indent" >   With these settings Gromacs will linearly interpolate the interaction functions
+between the A state and the B state. We therefore need to inform Gromacs about the B
+state as well. We will simply add the information (charges) about the B state to the
+topology as follows:
+                                                                     
+
+                                                                     
+   <div class="verbatim" id="verbatim-13">
+&#x00A0;atoms&#x00A0;]
+&#x00A0;<br />;&#x00A0;&#x00A0;&#x00A0;nr&#x00A0;&#x00A0;&#x00A0;&#x00A0;type&#x00A0;&#x00A0;resnr&#x00A0;residue&#x00A0;&#x00A0;atom&#x00A0;&#x00A0;cgnr&#x00A0;charge&#x00A0;&#x00A0;mass&#x00A0;&#x00A0;typeB&#x00A0;chargeB&#x00A0;&#x00A0;massB
+&#x00A0;<br />&#x00A0;&#x00A0;&#x00A0;&#x00A0;1&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;CU1+&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;1&#x00A0;&#x00A0;&#x00A0;CU1+&#x00A0;&#x00A0;&#x00A0;CU&#x00A0;&#x00A0;&#x00A0;&#x00A0;1&#x00A0;&#x00A0;&#x00A0;&#x00A0;1&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;63.546&#x00A0;&#x00A0;CU1+&#x00A0;2&#x00A0;63.546
+&#x00A0;<br />&#x00A0;&#x00A0;&#x00A0;&#x00A0;2&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;CU1+&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;2&#x00A0;&#x00A0;&#x00A0;CU2+&#x00A0;&#x00A0;&#x00A0;CU&#x00A0;&#x00A0;&#x00A0;&#x00A0;2&#x00A0;&#x00A0;&#x00A0;&#x00A0;2&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;63.546&#x00A0;&#x00A0;CU1+&#x00A0;1&#x00A0;63.546
+&#x00A0;<br />
+</div>
+<!--l. 428--><p class="nopar" > Perform a simulation at fixed <span 
+class="cmmi-10x-x-109">&#x03BB; </span>in each subdirectory. One of the mdrun output files is
+dhdl.xvg, which contains the <img 
+src="exercise16x.png" alt="&#x2202;V-
+&#x2202;&#x03BB;"  class="frac" align="middle"> values as a function of simulation time. You can
+use the g_analyze program, the obtain the averages and error estimates as a
+function of <span 
+class="cmmi-10x-x-109">&#x03BB;</span>. After you have created a file containing <span 
+class="cmsy-10x-x-109">&#x27E8;</span><img 
+src="exercise17x.png" alt="&#x2202;&#x2202;V&#x03BB;-"  class="frac" align="middle"><span 
+class="cmsy-10x-x-109">&#x27E9;</span><sub><span 
+class="cmmi-8">&#x03BB;</span></sub> as a function of <span 
+class="cmmi-10x-x-109">&#x03BB;</span>
+(between 0 and 1), you can also perform the integration from 0 to 1 with g_analyze.
+What is the result of the thermodynamic integration? Is it better than FEP and
+BAR?
+<!--l. 439--><p class="noindent" >
+   <h4 class="likesubsectionHead"><a 
+ id="x1-6000"></a>Jarzynski approaches</h4>
+<!--l. 441--><p class="noindent" >Create a new subdirectory and copy there the mdp and topology files that we used for the
+thermodynamic integration calculations. In this exercise, we will perform very many
+short slow-growth simulations. Slow growth is a continous variant of thermodynamic
+integration, in which <span 
+class="cmmi-10x-x-109">&#x03BB; </span>evolves continously and is thus a function of time, such that
+<span 
+class="cmmi-10x-x-109">&#x03BB;</span><span 
+class="cmr-10x-x-109">(</span><span 
+class="cmmi-10x-x-109">t</span><sub><span 
+class="cmmi-8">init</span></sub><span 
+class="cmr-10x-x-109">) = 0 </span>and <span 
+class="cmmi-10x-x-109">&#x03BB;</span><span 
+class="cmr-10x-x-109">(</span><span 
+class="cmmi-10x-x-109">t</span><sub>final</sub><span 
+class="cmr-10x-x-109">) = 1</span>. In the mdp file add the following information (in this
+example we perform 20 ps of simulation)
+                                                                     
+
+                                                                     
+   <div class="verbatim" id="verbatim-14">
+dt&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;=&#x00A0;0.002
+&#x00A0;<br />nsteps&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;=&#x00A0;10000
+&#x00A0;<br />
+&#x00A0;<br />free-energy&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;=&#x00A0;yes
+&#x00A0;<br />init-lambda&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;=&#x00A0;0
+&#x00A0;<br />delta-lambda&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;=&#x00A0;0.0001
+</div>
+<!--l. 456--><p class="nopar" > We will now create many subdirectories and carry out a short (few ps) slow growth in
+each of these. Again, scripting will make life easy.
+<!--l. 460--><p class="indent" >   After these simulations are done, collect the non-reversible works from all
+simulations. You can use the g_analyze program:
+                                                                     
+
+                                                                     
+   <div class="verbatim" id="verbatim-15">
+g_analyze&#x00A0;-f&#x00A0;dhdl.xvg&#x00A0;-integrate
+</div>
+<!--l. 464--><p class="nopar" > Note however, that the x value is time in ps, and this ranges from 0 to 20. You thus need
+to divide all works by 20 to get the correct <span 
+class="cmmi-10x-x-109">&#x03BB; </span>interval between 0 and 1. After you&#8217;ve
+collected the works, you can create a histogram with your favorite data analysis program.
+Try to fit a guassian to it. Use the Jarzynski equation (exponential average) to compute
+the reversible work:
+   <table 
+class="equation"><tr><td><a 
+ id="x1-6001r7"></a>
+   <center class="math-display" >
+<img 
+src="exercise18x.png" alt="                            &#x222B;
+exp [- &#x03B2;&#x0394;F  ] =--1- &#x2211;  exp[- &#x03B2;  tf&#x2202;V- d&#x03BB;dt]
+             nsim.            ti  &#x2202;&#x03BB; dt
+                  nsim.
+" class="math-display" ></center></td><td class="equation-label">(7)</td></tr></table>
+<!--l. 473--><p class="nopar" >
+<!--l. 475--><p class="indent" >   How many slow growth steps are needed to obtain an accurate free energy
+estimate?
+<!--l. 479--><p class="noindent" >
+   <h4 class="likesubsectionHead"><a 
+ id="x1-7000"></a>Conclusion</h4>
+                                                                     
+
+                                                                     
+<!--l. 481--><p class="noindent" >We have tried out different approaches for computing free energy. Clearly, the
+assymmetric Free energy perturbation approach should not be used, but when used in
+combination with the symmetric Bennet Acceptance Ratio approach it can deliver
+accurate estimates. Thermodynamic integration is also symmetric, and when the
+<span 
+class="cmmi-10x-x-109">&#x03BB;</span>-spacing is small enough to facilitate overlap between subsequent <span 
+class="cmmi-10x-x-109">&#x03BB; </span>ensembles, can
+provide accurate free energies as well. The first three methods assume that the changes in
+the Hamiltonian are slow enough that the system is always in equilibrium. Hence
+these approaches are referred to as &#8220;equilibrium methods&#8221;. However, due to the
+limitation on the sampling time, this is hardly the case in practice. The Jarzynski
+method, in contrast is defined for systems out of equilibrium. Although this
+may sound as a good thing given our limitations, very many simulations are
+needed to yield an accurate free energy due to the averaging. In the end, one
+therefore will not save on CPU cycles. Which method to choose from depends, as
+always, on the problem at hand, and it is up to you to decide which one you&#8217;ll
+use.
+<!--l. 500--><p class="indent" >   In this tutorial we focussed on changing charges. The methods are general, and we
+could have also changed bonded interactions. However, for conformational changes,
+other methods, based on Umbrella Sampling are mostly more suitable. Umbrella
+Sampling will be topic of a folow-up tutorial
+    
+</body></html> 
+
+                                                                     
+
+

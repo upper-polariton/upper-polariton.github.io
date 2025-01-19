@@ -1,0 +1,88 @@
+title                    = my_mdp_file
+cpp                      = /usr/bin/cpp -traditional
+include                  = 
+define                   = 
+
+
+integrator               = md
+tinit                    = 0
+dt                       = 0.0005
+nsteps                   = 2000
+init_step                = 0
+comm-mode                = Linear
+nstcomm                  = 1
+comm_grps                = system
+
+emtol                    = 100.0
+emstep                   = 0.0005
+
+nstxout                  = 100
+nstvout                  = 100
+nstfout                  = 100
+; Checkpointing helps you continue after crashes
+nstcheckpoint            = 100
+nstlog                   = 10
+nstenergy                = 10
+nstxtcout                = 10
+xtc-precision            = 1000
+xtc_grps                 = DNA
+
+nstlist                  = 5
+ns_type                  = grid
+pbc                      = xyz
+rlist                    = 0.9
+domain-decomposition     = no
+
+coulombtype              = Cut-off
+rcoulomb-switch          = 0
+rcoulomb                 = 1.6
+epsilon_r                = 1
+epsilon_rf               = 1
+
+vdwtype                  = Cut-Off
+rvdw-switch              = 0.
+rvdw                     = 1.6
+DispCorr                 = No
+
+fourierspacing           = 0.12
+fourier_nx               = 0
+fourier_ny               = 0
+fourier_nz               = 0
+pme_order                = 4
+ewald_rtol               = 1e-05
+ewald_geometry           = 3d
+epsilon_surface          = 0
+optimize_fft             = no
+
+tcoupl                   = Berendsen
+tc-grps                  = DNA SOL_Na
+tau-t                    = 0.1 0.1
+ref-t                    = 300 300
+Pcoupl                   = Berendsen
+Pcoupltype               = Isotropic
+tau-p                    = 1.0
+compressibility          = 4.5e-5
+ref-p                    = 1.0
+
+QMMM                     = yes
+QMMM-grps                = QMatoms
+QMmethod                 = am1
+QMMMscheme               = ONIOM
+QMbasis                  = sto-3g
+QMcharge                 = -1
+QMmult                   = 2
+
+gen_vel                  = no
+gen_temp                 = 00
+gen_seed                 = 18111976
+
+constraints              = all-bonds
+constraint_algorithm     = LINCS
+unconstrained_start      = no
+Shake-SOR                = no
+shake_tol                = 0.0001
+lincs_order              = 4
+lincs-iter               = 1
+lincs_warnangle          = 30
+morse                    = no
+
