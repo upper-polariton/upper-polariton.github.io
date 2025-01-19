@@ -1,0 +1,299 @@
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
+
+  <title>QM/MM implementation in Gromacs</title>
+</head><body><h1><b><font size="8"> QM/MM implementation in Gromacs</font></b></h1>
+
+
+<a name="intro">
+</a><h1><a name="intro">Introduction</a></h1>
+
+
+
+<a href="http://www.gromacs.org/">Gromacs</a> now provides an interface
+to the quantum chemistry packages GAMESS-UK, Gaussian0x, mopac7 and ORCA. On this page you can find a short <a href="#over">overview</a>
+of the capabilities, <a href="#doc">documentation</a>, <a href="#ex">examples</a>, and the <a href="#code">code</a> itself. All
+of this is under development and this page is only intended for those
+who would like to try and test it. The page will be frequently updated
+with newer versions of the code as QM/MM is still under development.
+
+
+<a name="over">
+</a><h1><a name="over">Overview of Gromacs'  QM/MM capabilities</a></h1>
+
+<ul>
+<a name="over">QM methods
+</a><ul><a name="over"> 
+</a><li><a name="over">AM1
+</a></li><li><a name="over">PM3
+</a></li><li><a name="over">RHF
+</a></li><li><a name="over">UHF
+</a></li><li><a name="over">CASSCF
+</a></li><li><a name="over">MP2
+</a></li><li><a name="over">DFT
+</a></li></ul>
+
+<a name="over">QM basissets
+</a><ul><a name="over"> 
+</a><li><a name="over">all
+</a></li></ul>
+
+<a name="over">Optimization <strong>!!!! not working properly, I will fix this soon !!!!</strong>!
+</a><ul><a name="over"> 
+</a><li><a name="over">Minima (integrator=OPT)
+</a></li><li><a name="over">Transtion states (integrator=TS) !!!! use LT instead !!!!
+</a></li></ul>
+
+<a name="over">Dynamics
+</a><ul>
+<li><a name="over"> ground state simulation
+</a></li><li><a name="over"> excited state simulation
+</a></li><li><a name="over"> Surface Hopping: switching from excited to ground state in a
+simulation
+</a></li></ul>
+
+<a name="over">QM-MM boundary interfaces
+</a><ul>
+<li><a name="over">standard QM/MM
+</a></li><li><a name="over">ONIOM
+</a></li><li><a name="over">multi-layer ONIOM
+</a></li></ul>
+</ul>
+
+<a href="#intro">back to top</a>
+
+<a name="doc">
+</a><h1><a name="doc">Documentation</a></h1>
+
+<ul>
+<a name="doc">A QM/MM how-to is included in the gromacs-qmmm tutorial. Soon, I will copy-paste
+those part into this document. Click </a><a href="http://wwwuser.gwdg.de/%7Eggroenh/EMBO2004/html/qmmmvacuum.html#qmmmhowto">here</a> to read it.
+
+</ul>
+
+<a href="#intro">back to top</a>
+<a name="ex">
+</a><h1><a name="ex">Examples</a></h1>
+
+<ul><a name="ex">Working on it, but if you need help for your system, </a><a href="mailto:ggroenh@gwdg.de">contact me</a>. For
+now there are two examples.
+<p>
+</p><ul>
+<li>excited state QM/MM MD simulation with <i>diabatic</i> Surface Hopping of Photoactive Yellow Protein
+(see <a href="http://wwwuser.gwdg.de/%7Eggroenh/qmmm/papers/groenhof04.pdf">JACS 126 (2004), 4228-4233</a>)
+<p>
+<a href="http://wwwuser.gwdg.de/%7Eggroenh/qmmm/examples/pyp.mdp">pyp.mdp</a> <br>
+<a href="http://wwwuser.gwdg.de/%7Eggroenh/qmmm/examples/pyp.ndx">pyp.ndx</a> <br>
+<a href="http://wwwuser.gwdg.de/%7Eggroenh/qmmm/examples/pyp.top">pyp.top</a> <br>
+<a href="http://wwwuser.gwdg.de/%7Eggroenh/qmmm/examples/pyp.gro">pyp.gro</a> <br>
+<a href="http://wwwuser.gwdg.de/%7Eggroenh/qmmm/examples/input.chk.Z">input.chk.Z</a> (checkpoint file which provides the MO coefficents for the CASSCF wavefuntion)
+
+</p></li><li>optimization of the transition state for the Diels-Alder reaction
+in a Diels-Alderase protein (part of the EMBO course on protein modeling in Shanhai, China,  september 2004)
+<p>
+<a href="http://wwwuser.gwdg.de/%7Eggroenh/EMBO2004/html/tutorial.html">Diels-Alderase QM/MM tutorial</a><br>
+</p></li><li>Splitting of a thymine dimer lesion in DNA (part of the advanced simulaion workshop in Sao Carlos, Brazil, november 2008)
+<p>
+<a href="http://wwwuser.gwdg.de/%7Eggroenh/SaoCarlos2008/html/tutorial.html">Thymine dimer splitting</a>
+</p></li></ul>
+</ul>
+<a href="#intro">back to top</a>
+<a name="code">
+</a><h1><a name="code">Source code</a></h1>
+
+
+<ul>
+
+<li><a name="code">Gromacs</a><p>
+
+<a name="code">From version 3.3 onwards, the default gromacs distributions support QM/MM. Visit our </a><a href="http://wwwuser.gwdg.de/%7Eggroenh/www.gromacs.org"> gromacs</a> webpage to obtain one. Below are two older
+versions, which we no longer provide support for. I therefore strongly advise
+you to use an official distribution version instead.
+</p><p>
+<a href="http://wwwuser.gwdg.de/%7Eggroenh/qmmm/gmx/gmx3.2/gmx.tar.gz">qmx.tar.gz</a> (gromacs v3.2 with QM/MM)<br></p><p>
+
+<a href="http://wwwuser.gwdg.de/%7Eggroenh/qmmm/gmx/gmx3.3/gmx.tar.gz">qmx.tar.gz
+</a> (gromacs v3.3 (CVS) with QM/MM)<br></p><p>
+
+<a href="http://cbp.cfn.kit.edu/joomla/index.php/downloads/18-gromacs-with-qm-mm-using-dftb3">Gromacs-5 with DFTB3</a> <p><p>
+
+</p></li><li>To compile gromacs you will need also the source codes of ORCA, mopac7,
+gaussian0x and/or GAMESS-UK. As these codes are owned by their
+respective copyright holders, I cannot distribute them myself. You
+have to obtain them yourself therefore. Here is where you can find them:
+<p>
+<a href="http://www.gaussian.com/">Gaussian</a><br>
+<a href="http://www.dl.ac.uk/CFS/cfs.html">GAMESS-UK</a><br>
+<a href="http://sourceforge.net/projects/mopac7/">MOPAC7</a> or <a href="http://wwwuser.gwdg.de/%7Eggroenh/qmmm/mopac/SGI/mopac7.tar.gz">mopac7.tar.gz</a><br>
+<a href="http://www.thch.uni-bonn.de/tc/orca">ORCA</a><br>
+</p><p>
+
+</p></li><li>In addition, you need the following bits of code to link mdrun to
+these QM packages<br>
+
+
+<br>
+ORCA
+<p>
+Download and install ORCA as indicated on the ORCA Homepage. Then simply configure
+gromacs with
+<ul>
+<li>--with-qmmm-orca --without-qmmm-gaussian
+</li></ul>
+<br>
+When running QM/MM jobs with ORCA you have to set the following environment variables:
+<ul>
+<li>BASENAME (tpr-filename without .tpr)
+</li><li>ORCA_PATH (PATH where the ORCA executables are located)
+</li></ul>
+<br>
+Furthermore you have to create a file called
+<ul>
+<li>BASENAME.ORCAINFO (e.g. test2.ORCAINFO, if you run test2.tpr)
+</li></ul>
+<br>
+In the ORCAINFO-file the method, basis set and all other ORCA-specific keywords must be given. (This also means that QMmethod and QMbasis from the mdp-file are ignored).
+For further information, have a look at the  <a href="http://www.thch.uni-bonn.de/tc/?section=downloads">ORCA website</a>.
+<br>
+<br>
+Mopac7
+<ul>
+<li><a href="http://wwwuser.gwdg.de/%7Eggroenh/qmmm/mopac/gmxmop.f">gmxmop.f</a> </li><li><a href="http://wwwuser.gwdg.de/%7Eggroenh/qmmm/mopac/dcart.f">dcart.f</a>, replace the default dcart.f by
+this one.  </li><li><a href="http://wwwuser.gwdg.de/%7Eggroenh/qmmm/mopac/libmopac.a.gz">libmopac.a.gz</a>
+(precompiled lib for linux) </li></ul><br> Compile all mopac files (f77 -O2
+-c *.f), except mopac.f, moldat.f and deriv.f (thes ones are to be
+replaced by gmxmop.f), and collect the objects (*.o) into a library
+(ar rcv libmopac.a *.o;ranlib libmopac.a). Or if you are using linux,
+simply download libmopac.a instead.<br><br>Note, for SGI, download
+this <a href="http://wwwuser.gwdg.de/%7Eggroenh/qmmm/mopac/SGI/gmxmop.f">gmxmop.f</a> instead. I don't know
+why, but the way common blocks are handled seems a bit different on
+this architecture.
+<p>
+Then, configure gromacs with
+</p><ul>
+<li>CPPFLAGS=-DUSE_MOPAC
+</li><li>LIBS=-lmopac
+</li><li>LDFLAGS=-L(location of libmopac.a)
+</li></ul>
+or modify the LIBS line in the Makefile (the quick and dirty way)
+<ul>
+<li>LIBS= ... -lmopac -lm ...
+</li></ul>
+<br>
+GAMESS-UK
+
+<ul>
+<li><a href="http://wwwuser.gwdg.de/%7Eggroenh/qmmm/GAMESS-UK/ver_c.f">ver_c.f</a>
+</li><li><a href="http://wwwuser.gwdg.de/%7Eggroenh/qmmm/GAMESS-UK/gamess.m">gamess.m</a>
+</li><li><a href="http://wwwuser.gwdg.de/%7Eggroenh/qmmm/GAMESS-UK/gmx.m">gmx.m</a>
+</li><li><a href="http://wwwuser.gwdg.de/%7Eggroenh/qmmm/GAMESS-UK/parallel.m">parallel.m</a> (if you want to run in parallel)
+</li><li><a href="http://wwwuser.gwdg.de/%7Eggroenh/qmmm/GAMESS-UK/Makefile">Makefile</a>
+</li></ul><br>
+
+Add the files to the GAMESS-UK/m4 subdir, update the Makefile to match
+the configuration on your computer system and compile the
+code. <br><br>
+
+Then, configure gromacs with 
+<ul>
+<li>CPPFLAGS=-DUSE_GAMESS
+</li><li>LDFLAGS=-L(location of libgamess.a)
+</li><li>LIBS='-lgamess -lg2c -lm'
+</li></ul>
+or modify the LIBS line in the Makefile
+<ul>
+<li>LIBS= ... -lgamess -lg2c -lm ...
+</li></ul>
+<br>
+<a name="gaussian">
+Gaussian03/09
+<p>
+There are two ways in which you can perform QM/MM simulations with
+gaussian. The first requires you to make a few modifications in links
+301, 510, 701 and 9999. This procudere will be explained below.
+<p> 
+
+The alternative approach is to use (and possibly slightly modify) the
+script found here: <a href="gau">gau</a>. This script reads and
+modifies the input file generated by gromacs, then calls the gaussian
+program and finally extracts the relevant information about energy and
+gradients and writes these to a file that gromacs can read. This
+approach is recommended if you only have access to a gaussian binary,
+or are not confident in programming. Nevertheless it is imperative to
+read and understand the script, as depending on your operating system,
+small modifications may still be required to run QM/MM simulations
+with gaussian smoothly.
+
+<p>
+
+To use it, set the environment variables $GAUSS_DIR to the location of
+the script in your filesystem and $GAUSS_EXE to the name of the
+script. In addition, gromacs requires also the environment $DEVEL_DIR
+to be set to somewhere, but this variable is ignored. 
+
+<p>
+
+Because we cannot distribute source code which is part of
+gaussian, we have made available a set of instructions to build these
+yourself, which is allowed as long as you have a legal version of the
+gaussian source code.
+</p><p>
+Gaussian provides a convenient way of building and using modified
+links. You should make a new subdirectory, say modlinks, in which you
+make directories for each of the links you want to modify. Then
+extract from the gaussian source tree, those functions that need
+modification into these directories and build an alternative
+executable by linking you objects with the original gaussian
+objects. With the %subst lxxx /home/user/modlinks/lxxx in the input
+file, gaussian will use your modified lxxx.exe instead of the
+original.
+</p><p>
+Gromacs uses gradients on the point charges, and thus modifications
+are required to l701.exe. Also to make these gradients available for
+gromacs, l9999, which controls the output of gaussian are
+essential. In addition a small modification should be made to l301, to
+exclude point charge - point charge interactions. Finally, link 510
+that performs the MCSCF has to be altered if you are interested in
+excited state dynamics.
+</p><p>
+After creating a subdirectory for these links in the modlinks
+directory, i.e.
+</p><p>
+~/modlinks/l301<br>
+~/modlinks/l510<br>
+~/modlinks/l701<br>
+~/modlinks/l9999<br>
+</p><p>
+the modified executables have to be built. Therefore, a makefile is
+required in each lxxx subdirectory. See for example
+the <a href="http://wwwuser.gwdg.de/%7Eggroenh/l301.make">l301.make</a> make file.
+</p><p>
+With the gaussian utility gau-fsplit, you can extract the subroutines
+that have to be changed, e.g.
+</p><p>
+gau-fsplit -e d1e $GAUSS_DIR/l701.F
+</p><p>
+To find the fortran source file that contains the function you need,
+you can use the grep command:
+</p><p>
+grep -i d1e $GAUSS_DIR/*.F
+</p><p>
+An overview of which functions have to be modified and how can be be
+found here: <a href="http://wwwuser.gwdg.de/%7Eggroenh/roadmap.pdf">roadmap.pdf</a>. After the
+modified links have been created, and gromacs has been configured
+with --with-qmmm-gaussian, the $DEVEL_DIR environment has to be set to
+the path of the modlinks subdir. Gromacs is now ready for doing QM/MM
+with gaussian.
+ 
+
+
+<br>
+<br>
+</p></li></ul>
+<a href="#intro">back to top</a>
+<hr size="1"> 
+updated 09/01/07
+
+</body></html>
+
+

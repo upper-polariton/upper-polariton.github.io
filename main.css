@@ -1,0 +1,112 @@
+body
+{
+background:#fafafa;
+padding:50px 0 0 0;
+font-family: "Lucida Sans Unicode", Tahoma, Verdana, Arial, Helvetica, sans-serif;
+}
+
+#hline
+{
+width:inherent;
+height:2px;
+background:#007c21;
+}
+
+#box
+{
+	margin: 0 auto;
+	width: 700px;
+	background:#fff;
+}
+
+#header
+{
+	width:inherent;
+	height:150px;
+	padding: 0 0 0 0;
+	background: transparent url(../img/logo150.png) 100% 0 no-repeat;
+	background-color:#fff;
+}
+
+#header h1{
+font-size: 25px;
+float:right;
+margin: 30px 190px 0 0;
+color:#007c21;
+}
+
+#header h2{
+font-size: 15px;
+margin: 15px 190px 0 0;
+float:right;
+color:#007c21;
+}
+#navigation
+{
+	float: left;
+	width: 700px;
+	background-color:#007c21;
+}
+
+#navigation ul
+{
+	margin: 0;
+	padding: 0;
+}
+
+#navigation ul li
+{
+	list-style-type: none;
+	display: inline;
+}
+
+#navigation li a
+{
+	display: block;
+	float: left;
+	padding: 2px 5px;
+	color:#fff;
+	text-decoration: none;
+	border-right: 1px solid#00bf32;
+}
+
+#navigation li a:hover { 
+/*background:#383; */
+background:#fff;
+color:#000;
+}
+
+#main
+{
+	width:inherent;
+	min-height:400px;
+	float: center;
+	font-size:12px;
+	padding: 40px 20px 20px 20px;
+	background:#fff;
+}
+#main h1
+{
+color:#474747;
+line-height: normal;
+font-size:16px;
+}
+#main h2
+{
+color:#474747;
+line-height: normal;
+font-size:12px;
+}
+
+#footer
+{
+	width:inherent;
+	text-align: right;
+	padding: 1px 5px 0 0;
+	height: 25px;
+	background:#fff;
+}
+#footer h1{
+font-size:10px;
+color:#007c21;
+}

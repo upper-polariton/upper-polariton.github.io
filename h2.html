@@ -1,0 +1,306 @@
+<html>
+<head>
+  <title>Quantum Chemistry practical II</title>
+</head>
+ <body bgcolor="#bbdddd" text="#000088" link="#880000" vlink="#440000" alink="#ffffff">
+
+<h1><font face="Arial"><b><font face="Comic Sans MS,Arial" size="6"> Quantum Chemistry tutorial</font></b></font></h1>
+
+ 
+<hr size="1"> <p> 
+Exploring homolytic bond cleavage of a hydrogen molecule with Gaussian09
+<p>
+<hr size="1"> 
+
+<a NAME="top">
+<h1>Introduction</h1>
+
+
+<IMG align="right" SRC="../images/h2.jpg" alt="h2" width="277" height="379">
+In the previous lecture we've learned about the theoretical basis of electronic 
+structure methods, and in  particular about the Hartree-Fock method.
+Now it is time to jump into the electronic structure business and perform
+a couple of calculations by yourself.
+
+The package we are going to use is
+called <a href="http://www.gaussian.com">Gaussian</a>. It is among the
+modern electronic structure codes available and provides an
+easy-to-use interface called Gaussview that allows for a user-friendly access
+to quantum
+chemistry. Additionaly the <a href="http://www.gaussian.com">Gaussian program</a>
+provides many post-Hartree-Fock methods.
+
+<br> <p>To learn how to use the program by yourself or maybe extend
+your knowledge beyond the scope of this tutorial one can check out the
+links on
+the <a href="http://www.gaussian.com/g_tech/g_ur/g09help.htm">following
+site</a>.
+<br> <p>
+To start a calculation we basically need four things:
+
+<UL>
+<LI> the structure of the molecule of interest in (cartesian or
+internal) coordinates
+<LI> the overall charge and spin state of the system
+<LI> the method that will be used (Hartree-Fock (HF), Density
+Functional Theory (DFT), Moeller-Plesset perturbation theory (MPx)
+etc.)
+<LI> a basis set.
+
+</UL>
+
+The files needed for this practical can be downloaded as an
+archive <a href="./h2.tar.gz">here</a> and unpacked by typing<br> <p>
+<div class="code">
+<pre>
+tar xzvf h2.tar.gz
+</pre>
+</div>
+
+However, you don't need these, as all files required can be created
+with the information below.
+
+<h2>The H-H molecule</h2>
+
+Our calculations will be on the simple H2 molecule, which is the smallest
+molecule that exhibits all fundamental aspects of chemical bonding (why?).
+
+<h3>Single point energy calculation </h3>
+
+A simple input for the electronic structure calculation of H2 is given below:
+<div class="code">
+<pre>
+%chk=h2_SP
+#P RHF 6-31G 
+
+h2 molecule
+
+0 1
+h 
+h 1 r
+
+r 1.0
+
+</pre>
+</div>
+ The first line starting with %chk specifies that we want to keep the
+checkpoint file. You are free to choose a file name; I used h2_SP
+(standing for single Point). Orbitals are stored on this file and can
+be visualized with Gaussview. The #P tells Gaussian to print all
+information during the computation. Then, the method is specified, which is
+Restricted Hartree Fock (RHF) and the basis (6-31G) is selected, using
+the so-called Pople notation. G stands for "Gaussian", so a GTO basis
+with 6 gaussian functions for the inner (non-valence) electrons and 4
+(3+1) for the valence electrons is used. Then comes a whileline
+followed by a title string and another whiteline. The next two
+integers represent the total charge (0 in this case), and spin
+multiplicity (i.e. the eigenvalue of the S*S operator, which is
+(S(S+1)=1, thus Singlet). For the geometry we use a Z-matrix. In the
+case of a diatomic, one needs to specify only the interatomic distance
+r, which we set at 1.0 Angstrom.
+<p> 
+Now we can do the electronic structure calculation by typing
+
+<div class="code">
+<pre>
+g09 h2.com 
+</pre>
+</div>
+
+During the calculation Gaussian writes an output file that
+communicates the most important infos to the user. You can extract the
+following information:
+<UL>
+<LI> number of SCF cycles needed for convergence
+<LI> the HF energy (what units are being used?)
+<LI> the dipole moment
+
+</UL>
+
+Additionaly you could extract the individual HF energies after each
+SCF cycle and plot them against the number of cycles. I assume you
+know how at least one program to visualize data<br> <p>
+
+<h3>Molecular orbitals</h3>
+
+In the next step we want to see the bonding and antibonding molecular
+orbitals (MO) of the H2 molecule. For this we have to start the
+Gaussview program by typing
+
+<div class="code">
+<pre>
+gview.exe 
+</pre>
+</div>
+In the main window, select File to open the h2_SP.chk checkpoint file.
+The click the molecular orbital button
+<p>
+<IMG SRC="gview_MO.png" >
+<p>
+to open the orbital interface. There, select the Visualize tab and
+click Update to render the orbitals.
+<p>
+<IMG SRC="mo_visualize.png" >
+<p>
+To see the orbtials, click on the small square in the energy diagram:
+<p>
+<IMG SRC="mo_H2.png" >
+<p>
+
+<h3>Dissociation into H atoms</h3>
+
+So far, we have only performed so-called single-point calculations,
+i.e. computed the HF energy for a fixed nuclear configuration. Gaussian
+is quite versatile when it comes to automatically perform scans along
+selected coordinates. In our case of the H2, we will now determine the
+energy profile (or the potential energy surface (PES)) along the H-H
+distance. The input file now looks like this:
+
+<div class="code">
+<pre>
+%chk=h2_rhf_scan
+# RHF 6-31G SCAN
+
+h2 molecule
+
+0 1
+h
+h 1 r
+
+r 0.5 S 55 0.1
+
+</pre>
+</div>
+
+The Scan keyword specificies that we want to scan one or more
+coordinates. In our case, we scan along the intermolecular distance,
+starting from 0.5 angstrom up to 6.0 Angstom in 55 steps of 0.1
+Angstrom each. If you think this takes too long to compute, you can
+reduce the number of steps, and increase the stepsize accordingly.
+The program will loop over all specified distances and perform for
+each of those an independent SCF calculation. Finally, a table of the
+respective HF energies will be written to the output (.log)
+file. Gaussview can be used to create plots, but you're free to use a
+program of choice. In Gaussview, open the .log file, select in the
+main window the Results menu and choose Scan. This will bring up a new
+window showing the electronic energy as a function of the H-H
+distance.
+<p>
+Look at the curve.  What is the energy one would expect for the dissociation
+limit (i.e. r-> oo) of H-H? <br> <p>
+
+As will be discussed in the lectures, at the dissociation limit, the
+restricted Hartree Fock solution contains so-called ionic
+contributions, in which both electrons are localized on one of the
+atoms. This leads to a too high dissociation energy (by how much?).
+Clearly these contribution should decrease with increasing
+intermolecular distance r.
+<p>
+The Unrestricted Hartree Fock method, in which the paired alpha and
+beta spins are not forced to occuppy the same orbital, overcomes this
+problem (but wavefuntion is not eigenfunction of the S*S
+operator). Use the UHF method and repeat the dissociation calculation.
+<p>
+The input file should look like
+<div class="code">
+<pre>
+%chk=h2_uhf_scan
+# UHF 6-31G SCAN guess=(mix,always)
+
+h2 molecule
+
+0 1
+h
+h 1 r
+
+r 0.5 S 55 0.1
+
+</pre>
+</div>
+
+Please observe that a broken symmetry UHF singlet wavefunction is only
+obtained using the guess=(mix,always) keyword. If this is not used, the initial
+guess is chosen such that the SCF calculation converges to the RHF
+wavefunction even with the UHF Ansatz.
+
+<h3>Beyond Restricted Hartree Fock</h3>
+
+As pointed out in the lecture, the HF method gives molecular
+interaction energies that are only approximations to the exact quantum
+many-body energy. In the following we will study the effect of
+improving the RHF approximation. This will be achieved via
+perturbation theory, the so-called Moeller-Plesset (MPx, where x gives
+the order in the perturbation expansion) and variational
+multi-determinant methods, like e.g. CASSCF.
+<p>
+We will create an input file for each of these methods and repeat the
+scans.
+<p>
+For MP2
+<div class="code">
+<pre>
+%chk=h2_mp2_scan
+# MP2 6-31G SCAN
+
+h2 molecule
+
+0 1
+h
+h 1 r
+
+r 0.5 S 55 0.1
+
+</pre>
+</div>
+
+For MP4
+<div class="code">
+<pre>
+%chk=h2_mp4_scan 
+# mp4 6-31G SCAN
+
+h2 molecule
+
+0 1
+h
+h 1 r
+
+r 0.5 S 55 0.1
+
+</pre>
+</div>
+
+For CASSCF. Note that since we include all electron (2) and all
+orbitals (4), it is essentially full CI, apart form fact that the MO
+coefficients are optimized.
+<div class="code">
+<pre>
+%chk=h2_cas_scan
+# CASSCF(2,4) 6-31G SCAN
+
+h2 molecule
+
+0 1
+h
+h 1 r
+
+r 0.5 S 55 0.1
+
+</pre>
+</div>
+
+After completing these calculations you can compare the dissociation
+curves.  In our example the CASSCF method can be considered as the
+most accurate. Compare your result with respect to the obtained
+equilibrium bonding distance (How large is the error for this
+quantity?) and the dissociation limit for each method. Hereby the
+CASSCF results should serve as the reference energy curve.
+
+<p>Compare the results of the calculations with second and fourth
+order perturbation (MP2 -> MP4)
+
+<p> What is the error in the CI result compared to the analytical
+results of -1 Hartree. How can we improve the CI dissociation
+energy?<br> <p><p>
+
+
