@@ -67,7 +67,7 @@ simulation
 
 <ul>
 <a name="doc">A QM/MM how-to is included in the gromacs-qmmm tutorial. Soon, I will copy-paste
-those part into this document. Click </a><a href="http://wwwuser.gwdg.de/%7Eggroenh/EMBO2004/html/qmmmvacuum.html#qmmmhowto">here</a> to read it.
+those part into this document. Click </a><a href="EMBO2004/html/qmmmvacuum.html#qmmmhowto">here</a> to read it.
 
 </ul>
 
@@ -80,21 +80,21 @@ now there are two examples.
 <p>
 </p><ul>
 <li>excited state QM/MM MD simulation with <i>diabatic</i> Surface Hopping of Photoactive Yellow Protein
-(see <a href="http://wwwuser.gwdg.de/%7Eggroenh/qmmm/papers/groenhof04.pdf">JACS 126 (2004), 4228-4233</a>)
+(see <a href="qmmm/papers/groenhof04.pdf">JACS 126 (2004), 4228-4233</a>)
 <p>
-<a href="http://wwwuser.gwdg.de/%7Eggroenh/qmmm/examples/pyp.mdp">pyp.mdp</a> <br>
-<a href="http://wwwuser.gwdg.de/%7Eggroenh/qmmm/examples/pyp.ndx">pyp.ndx</a> <br>
-<a href="http://wwwuser.gwdg.de/%7Eggroenh/qmmm/examples/pyp.top">pyp.top</a> <br>
-<a href="http://wwwuser.gwdg.de/%7Eggroenh/qmmm/examples/pyp.gro">pyp.gro</a> <br>
-<a href="http://wwwuser.gwdg.de/%7Eggroenh/qmmm/examples/input.chk.Z">input.chk.Z</a> (checkpoint file which provides the MO coefficents for the CASSCF wavefuntion)
+<a href="qmmm/examples/pyp.mdp">pyp.mdp</a> <br>
+<a href="qmmm/examples/pyp.ndx">pyp.ndx</a> <br>
+<a href="qmmm/examples/pyp.top">pyp.top</a> <br>
+<a href="qmmm/examples/pyp.gro">pyp.gro</a> <br>
+<a href="qmmm/examples/input.chk.Z">input.chk.Z</a> (checkpoint file which provides the MO coefficents for the CASSCF wavefuntion)
 
 </p></li><li>optimization of the transition state for the Diels-Alder reaction
 in a Diels-Alderase protein (part of the EMBO course on protein modeling in Shanhai, China,  september 2004)
 <p>
-<a href="http://wwwuser.gwdg.de/%7Eggroenh/EMBO2004/html/tutorial.html">Diels-Alderase QM/MM tutorial</a><br>
+<a href="EMBO2004/html/tutorial.html">Diels-Alderase QM/MM tutorial</a><br>
 </p></li><li>Splitting of a thymine dimer lesion in DNA (part of the advanced simulaion workshop in Sao Carlos, Brazil, november 2008)
 <p>
-<a href="http://wwwuser.gwdg.de/%7Eggroenh/SaoCarlos2008/html/tutorial.html">Thymine dimer splitting</a>
+<a href="SaoCarlos2008/html/tutorial.html">Thymine dimer splitting</a>
 </p></li></ul>
 </ul>
 <a href="#intro">back to top</a>
@@ -110,9 +110,9 @@ in a Diels-Alderase protein (part of the EMBO course on protein modeling in Shan
 versions, which we no longer provide support for. I therefore strongly advise
 you to use an official distribution version instead.
 </p><p>
-<a href="http://wwwuser.gwdg.de/%7Eggroenh/qmmm/gmx/gmx3.2/gmx.tar.gz">qmx.tar.gz</a> (gromacs v3.2 with QM/MM)<br></p><p>
+<a href="qmmm/gmx/gmx3.2/gmx.tar.gz">qmx.tar.gz</a> (gromacs v3.2 with QM/MM)<br></p><p>
 
-<a href="http://wwwuser.gwdg.de/%7Eggroenh/qmmm/gmx/gmx3.3/gmx.tar.gz">qmx.tar.gz
+<a href="qmmm/gmx/gmx3.3/gmx.tar.gz">qmx.tar.gz
 </a> (gromacs v3.3 (CVS) with QM/MM)<br></p><p>
 
 <a href="http://cbp.cfn.kit.edu/joomla/index.php/downloads/18-gromacs-with-qm-mm-using-dftb3">Gromacs-5 with DFTB3</a> <p><p>
@@ -158,14 +158,14 @@ For further information, have a look at the  <a href="http://www.thch.uni-bonn.d
 <br>
 Mopac7
 <ul>
-<li><a href="http://wwwuser.gwdg.de/%7Eggroenh/qmmm/mopac/gmxmop.f">gmxmop.f</a> </li><li><a href="http://wwwuser.gwdg.de/%7Eggroenh/qmmm/mopac/dcart.f">dcart.f</a>, replace the default dcart.f by
-this one.  </li><li><a href="http://wwwuser.gwdg.de/%7Eggroenh/qmmm/mopac/libmopac.a.gz">libmopac.a.gz</a>
+<li><a href="qmmm/mopac/gmxmop.f">gmxmop.f</a> </li><li><a href="qmmm/mopac/dcart.f">dcart.f</a>, replace the default dcart.f by
+this one.  </li><li><a href="qmmm/mopac/libmopac.a.gz">libmopac.a.gz</a>
 (precompiled lib for linux) </li></ul><br> Compile all mopac files (f77 -O2
 -c *.f), except mopac.f, moldat.f and deriv.f (thes ones are to be
 replaced by gmxmop.f), and collect the objects (*.o) into a library
 (ar rcv libmopac.a *.o;ranlib libmopac.a). Or if you are using linux,
 simply download libmopac.a instead.<br><br>Note, for SGI, download
-this <a href="http://wwwuser.gwdg.de/%7Eggroenh/qmmm/mopac/SGI/gmxmop.f">gmxmop.f</a> instead. I don't know
+this <a href="qmmm/mopac/SGI/gmxmop.f">gmxmop.f</a> instead. I don't know
 why, but the way common blocks are handled seems a bit different on
 this architecture.
 <p>
@@ -183,11 +183,11 @@ or modify the LIBS line in the Makefile (the quick and dirty way)
 GAMESS-UK
 
 <ul>
-<li><a href="http://wwwuser.gwdg.de/%7Eggroenh/qmmm/GAMESS-UK/ver_c.f">ver_c.f</a>
-</li><li><a href="http://wwwuser.gwdg.de/%7Eggroenh/qmmm/GAMESS-UK/gamess.m">gamess.m</a>
-</li><li><a href="http://wwwuser.gwdg.de/%7Eggroenh/qmmm/GAMESS-UK/gmx.m">gmx.m</a>
-</li><li><a href="http://wwwuser.gwdg.de/%7Eggroenh/qmmm/GAMESS-UK/parallel.m">parallel.m</a> (if you want to run in parallel)
-</li><li><a href="http://wwwuser.gwdg.de/%7Eggroenh/qmmm/GAMESS-UK/Makefile">Makefile</a>
+<li><a href="qmmm/GAMESS-UK/ver_c.f">ver_c.f</a>
+</li><li><a href="qmmm/GAMESS-UK/gamess.m">gamess.m</a>
+</li><li><a href="qmmm/GAMESS-UK/gmx.m">gmx.m</a>
+</li><li><a href="qmmm/GAMESS-UK/parallel.m">parallel.m</a> (if you want to run in parallel)
+</li><li><a href="qmmm/GAMESS-UK/Makefile">Makefile</a>
 </li></ul><br>
 
 Add the files to the GAMESS-UK/m4 subdir, update the Makefile to match
@@ -266,7 +266,7 @@ directory, i.e.
 </p><p>
 the modified executables have to be built. Therefore, a makefile is
 required in each lxxx subdirectory. See for example
-the <a href="http://wwwuser.gwdg.de/%7Eggroenh/l301.make">l301.make</a> make file.
+the <a href="l301.make">l301.make</a> make file.
 </p><p>
 With the gaussian utility gau-fsplit, you can extract the subroutines
 that have to be changed, e.g.
@@ -279,7 +279,7 @@ you can use the grep command:
 grep -i d1e $GAUSS_DIR/*.F
 </p><p>
 An overview of which functions have to be modified and how can be be
-found here: <a href="http://wwwuser.gwdg.de/%7Eggroenh/roadmap.pdf">roadmap.pdf</a>. After the
+found here: <a href="roadmap.pdf">roadmap.pdf</a>. After the
 modified links have been created, and gromacs has been configured
 with --with-qmmm-gaussian, the $DEVEL_DIR environment has to be set to
 the path of the modlinks subdir. Gromacs is now ready for doing QM/MM
